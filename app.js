@@ -7,6 +7,8 @@ const app = express()
 const connectDb = require("./config/config")
 app.use(express.json())
 
+const cors = require("cors")
+
 app.use(express.urlencoded({extended:true}))
 
 const errorHandler = require("./src/middlewares/errorHandler")
@@ -16,6 +18,8 @@ const userRouter = require("./src/routers/userRoute")
 // app.use(cookieparser())
 
 connectDb()
+
+app.use(cors())
 
 app.use("/api/v1/registeration",userRouter)
 
