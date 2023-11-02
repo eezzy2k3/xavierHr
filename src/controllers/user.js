@@ -96,38 +96,68 @@ const confirmEmail =  asyncHandler( async(req,res,next)=>{
 
     await user.save();
 
-    res.status(200).json({success:true,msg:"Email successfully confirmed",data:user})
+    const token = jwt.sign(
+      {
+        userId: user._id,
+        email: user.email,
+        role: user.role,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        isEmployed: user.isEmployed,
+        department: user.department,
+        displayPicture: user.displayPicture,
+        jobRole: user.jobRole,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "30d" }
+    );
+
+    res.status(200).json({success:true,msg:"Email successfully confirmed",data:{user,token}})
     
  })
 
  const login =  asyncHandler( async(req,res,next)=>{
     
-    const {companyEmail,password} = req.body
-    
-
-    const user = await Company.findOne({companyEmail: companyEmail.toLowerCase() }).select("+password");
-
-    // if no user found throw error
-    if (!user) {
-        return next(new ErrorResponse("company not registered",404));
+    const {companyEmail,password,email,type} = req.body
+    if(!type){
+      return next(new ErrorResponse("Please select a type",404));
     }
 
+  let user;
+
+  if(type == "company"){
+    user = await Company.findOne({companyEmail: companyEmail.toLowerCase() }).select("+password");
+
+  }else{
+    user = await User.findOne({email: email.toLowerCase() }).select("+password");
+
+  }
+    
+
    
+    // if no user found throw error
+    if (!user) {
+        return next(new ErrorResponse("Invalid credentials",404));
+    }
 
-          // if user is not confirmed throw error
-          if (user.isConfirmed === false) {
-            return next(new ErrorResponse("Please confirm your account",400));
-          }
+   if(type == "employee"){
+     // if user is not confirmed throw error
+     if (user.isConfirmed === false) {
+      return next(new ErrorResponse("Please confirm your account",400));
+    }
 
-          // if user has not set password throw error
-          if (user.isPasswordSet === false) {
-            return next(new ErrorResponse("Please set your password",400));
-          }
+    // if user has not set password throw error
+    if (user.isPasswordSet === false) {
+      return next(new ErrorResponse("Please set your password",400));
+    }
 
-          // if user is no more employed throw error
-          if (user.isEmployed === false) {
-            return next(new ErrorResponse("Please contact admin",400));
-          }
+    // if user is no more employed throw error
+    if (user.isEmployed === false) {
+      return next(new ErrorResponse("Please contact admin",400));
+    }
+   }
+
+         
 
           // compare password
           const isValidPassword = await bcrypt.compare(password, user.password);
