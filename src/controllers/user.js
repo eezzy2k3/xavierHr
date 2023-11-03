@@ -253,6 +253,8 @@ createdUsers.push(user);
         return next(new ErrorResponse("User does not exist",404));
     }
 
+    console.log(typeof user.confirmationCode)
+
     // if user is already confirmed throw error
     if (user.isConfirmed === true) {
         return next(new ErrorResponse("Employee email already confirmed",400));
