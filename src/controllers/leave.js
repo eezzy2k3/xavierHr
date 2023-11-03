@@ -9,6 +9,7 @@ const asyncHandler = require("../middlewares/asyncHandler")
 const fs = require("fs")
 const cloudinary = require("../utils/cloudinary")
 const {generateOTP} = require("../utils/generateCode")
+const getWeekdayCount = require("../utils/weekDays")
 
 
 const createLeave = asyncHandler(async(req,res,next)=>{

@@ -126,7 +126,7 @@ const confirmEmail =  asyncHandler( async(req,res,next)=>{
 
   let user;
 
-  if(type == "company"){
+  if(type.toLowerCase() == "company"){
     user = await Company.findOne({companyEmail: companyEmail.toLowerCase() }).select("+password");
 
   }else{
