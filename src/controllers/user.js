@@ -127,12 +127,17 @@ const confirmEmail =  asyncHandler( async(req,res,next)=>{
   let user;
 
   if(type.toLowerCase() == "company"){
-    user = await Company.findOne({companyEmail: companyEmail.toLowerCase() }).select("+password");
+    user = await Company.findOne({companyEmail: email.toLowerCase() }).select("+password");
 
-  }else{
+  }
+
+  if(type.toLowerCase() == "employee"){
     user = await User.findOne({email: email.toLowerCase() }).select("+password");
 
   }
+   
+
+  
     
 
    
@@ -141,7 +146,7 @@ const confirmEmail =  asyncHandler( async(req,res,next)=>{
         return next(new ErrorResponse("Invalid credentials",404));
     }
 
-   if(type == "employee"){
+   if(type.toLowerCase() == "employee"){
      // if user is not confirmed throw error
      if (user.isConfirmed === false) {
       return next(new ErrorResponse("Please confirm your account",400));
