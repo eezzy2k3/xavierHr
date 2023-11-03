@@ -81,6 +81,24 @@ fullName: {
     Required: true,
     select: false,
   },
+  role: {
+    type: String,
+    enum: ["Employee", "Super-Admin", "Admin", "Supervisor"],
+    default: "Employee",
+  },
+  status: {
+    type: String,
+    enum: ["Invited", "Active", "Deactivated"],
+    default: "Invited",
+  },
+  isEmployed: {
+    type: Boolean,
+    default: true,
+  },
+  isConfirmed: {
+    type: Boolean,
+    default: false,
+  },
   nextofKinEmail: {
     type: String,
   },

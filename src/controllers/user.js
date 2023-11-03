@@ -8,6 +8,7 @@ const asyncHandler = require("../middlewares/asyncHandler")
 const fs = require("fs")
 const cloudinary = require("../utils/cloudinary")
 const {generateOTP} = require("../utils/generateCode")
+const {generatePassword} = require("../utils/generatePassword")
 
 
 const registerCompany = asyncHandler( async(req,res,next)=>{
@@ -260,6 +261,8 @@ createdUsers.push(user);
 
     // set user confirmed to true
     user.isConfirmed = true;
+    
+    user.status = "Active"
 
     // delete confirmation code
     user.confirmationCode = undefined;
@@ -346,17 +349,17 @@ const updateEmployeeProfile = asyncHandler(async(req,res,next)=>{
 })
 
 const resetPassword = asyncHandler(async(req,res,next)=>{
-  const { email } = payload;
+  const { email } = req.body;
 
   if (!email) {
-    throw new BadRequestError("Please provide an email");
+    return next(new ErrorResponse("Please provide an email"));
   }
 
   const user = await User.findOne({ email: email.toLowerCase() });
 
   // if no user found throw error
   if (!user) {
-    throw new ResourceNotFoundError("user does not exist");
+    return next(new ErrorResponse("user does not exist"));
   }
   const newPassword = generatePassword(12);
 
@@ -366,13 +369,14 @@ const resetPassword = asyncHandler(async(req,res,next)=>{
   // set password
   user.password = hashedPassword;
 
+  console.log(user)
+
   await user.save();
 
   const message = `<h1>Password Reset Successfully!</h1>
   <h2>Hello ${user.fullName}</h2>
   <p>Your password has been reset successfully, you can now use this password: ${newPassword} to login to your account and proceed to change it to your desired password.</p>
-  <a href=http://localhost:3000/confirmemail/${user._id}> Click here</a>
-  </div>`
+ `
 
   try{
     await sendMail({
@@ -384,10 +388,24 @@ const resetPassword = asyncHandler(async(req,res,next)=>{
      console.log(error.message);
      next(new ErrorResponse("message could not be sent",500))
    }
-
+   res.status(200).json({success:true,msg:"Reset password email sent"})
 })
+
+const choosePlan = asyncHandler(async(req,res,next)=>{
+  const { plan } = req.body
+  const userId = req.user.userId
+  const company = await Company.findById(userId)
+  if(!company)  return next(new ErrorResponse("This Organisation does not exist"));
+  company. SubscriptionType = plan
+  await company.save()
+  res.status(200).json({success:true,msg:"Subscription Plan successfully selected",data:company})
+})
+
+
+
+
  
 
 
 
-module.exports = {registerCompany,confirmEmail,login,createUser,updateEmployeeProfile,confirmUserEmail,resetPassword}
+module.exports = {registerCompany,confirmEmail,login,createUser,updateEmployeeProfile,confirmUserEmail,resetPassword,choosePlan}
