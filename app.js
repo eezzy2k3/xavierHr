@@ -14,6 +14,7 @@ app.use(express.urlencoded({extended:true}))
 const errorHandler = require("./src/middlewares/errorHandler")
 
 const userRouter = require("./src/routers/userRoute")
+const leaveRouter = require("./src/routers/leaveRoute")
 
 // app.use(cookieparser())
 
@@ -22,6 +23,7 @@ connectDb()
 app.use(cors())
 
 app.use("/api/v1/registeration",userRouter)
+app.use("/api/v1/leave",leaveRouter)
 
 app.use(errorHandler)
 

@@ -177,12 +177,12 @@ const confirmEmail =  asyncHandler( async(req,res,next)=>{
               userId: user._id,
               email: user.email,
               role: user.role,
-              firstName: user.firstName,
-              lastName: user.lastName,
+              fullName: user.fullName,
               isEmployed: user.isEmployed,
               department: user.department,
               displayPicture: user.displayPicture,
               jobRole: user.jobRole,
+              company:user.company
             },
             process.env.JWT_SECRET,
             { expiresIn: "30d" }
@@ -253,7 +253,7 @@ createdUsers.push(user);
         return next(new ErrorResponse("User does not exist",404));
     }
 
-    console.log(typeof user.confirmationCode)
+    console.log(typeof user.confirmationCode, user.confirmationCode)
 
     // if user is already confirmed throw error
     if (user.isConfirmed === true) {
@@ -281,8 +281,9 @@ createdUsers.push(user);
         userId: user._id,
         email: user.email,
         role: user.role,
-        name: user.name,
+        fullName: user.fullName,
         isEmployed: user.isEmployed,
+        company:user.company
       },
       process.env.JWT_SECRET,
       { expiresIn: "30d" }
@@ -408,6 +409,13 @@ const choosePlan = asyncHandler(async(req,res,next)=>{
   res.status(200).json({success:true,msg:"Subscription Plan successfully selected",data:company})
 })
 
+const getMe = asyncHandler(async(req,res,next)=>{
+  const userId = req.user.userId
+  const user = await User.findById(userId).populate({path:"company",select:"companyName logo"})
+  if(!user)  return next(new ErrorResponse("This Employee does not exist"));
+  res.status(200).json({success:true,msg:"User successfully retreived",data:user})
+})
+
 
 
 
@@ -415,4 +423,4 @@ const choosePlan = asyncHandler(async(req,res,next)=>{
 
 
 
-module.exports = {registerCompany,confirmEmail,login,createUser,updateEmployeeProfile,confirmUserEmail,resetPassword,choosePlan}
+module.exports = {registerCompany,confirmEmail,login,createUser,updateEmployeeProfile,confirmUserEmail,resetPassword,choosePlan,getMe}

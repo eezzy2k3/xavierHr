@@ -1,3 +1,8 @@
+const mongoose = require("mongoose");
+
+const mongoosePaginate = require("mongoose-paginate-v2");
+
+
 mongoosePaginate.paginate.options = {
     limit: 20,
     useEstimatedCount: false,
@@ -16,13 +21,16 @@ mongoosePaginate.paginate.options = {
   
   const leaveSchema = new mongoose.Schema(
     {
-      name: {
+      fullName: {
         type: String,
       },
       email: {
         type: String,
       },
       userId: {
+        type: mongoose.Schema.Types.ObjectId,
+      },
+      company: {
         type: mongoose.Schema.Types.ObjectId,
       },
       leaveType: {
@@ -40,78 +48,27 @@ mongoosePaginate.paginate.options = {
       reasonForLeave: {
         type: String,
       },
-      contactName: {
-        type: String,
-      },
-      contactEmail: {
-        type: String,
-      },
-      contactNumber: {
-        type: String,
-      },
-      jobRole: {
-        type: String,
-      },
-      department: {
-        type: String,
-        enum: ["Operations", "Sales", "Engineering", "Product", "Growth", "Marketing", "Agent"],
-      },
+    
+      
       relieverName: {
         type: String,
       },
-      relieverEmail: {
-        type: String,
-      },
-      relieverId: {
-        type: mongoose.Schema.Types.ObjectId,
-      },
-      linemanagerName: {
-        type: String,
-      },
-      linemanagerEmail: {
-        type: String,
-      },
-      linemanagerId: {
-        type: mongoose.Schema.Types.ObjectId,
-      },
-  
-      linemanagerStatus: {
-        type: String,
-        default: "Pending",
-      },
+      
+    
       hrStatus: {
         type: String,
         default: "Pending",
       },
-      relieverStatus: {
-        type: String,
-        default: "Pending",
-      },
-      linemanagerApprovalDate: {
-        type: String,
-        default: "Not yet",
-      },
+      
       hrApprovalDate: {
         type: String,
         default: "Not yet",
       },
-      relieverApprovalDate: {
-        type: String,
-        default: "Not yet",
-      },
-      status: {
-        type: String,
-        default: "Pending",
-      },
-      linemanagerComment: {
-        type: String,
-      },
+   
       hrComment: {
         type: String,
       },
-      relieverComment: {
-        type: String,
-      },
+     
       displayPicture: {
         type: String,
       },
@@ -119,16 +76,18 @@ mongoosePaginate.paginate.options = {
         type: Number,
       },
       leaveTaken: {
-        type: String,
+        type: Number,
       },
-      alternativeNumber: {
-        type: String,
+      leaveDayApproved: {
+        type: Number,
+        default:0
       },
+    
     },
     { timestamps: true }
   );
 
   leaveSchema.plugin(mongoosePaginate);
-const Leave = mongoose.model("Leave", userSchema);
+const Leave = mongoose.model("Leave", leaveSchema);
 
 module.exports = Leave;
