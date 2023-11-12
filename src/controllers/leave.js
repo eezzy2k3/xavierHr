@@ -33,12 +33,12 @@ const createLeave = asyncHandler(async(req,res,next)=>{
       startDate = new Date(startDate);
       if (startDate <= Date.now()) {
         // Start date is not valid
-        return next(new ErrorResponse("Start date must be greater than the current date and time."));
+        return next(new ErrorResponse("Start date must be greater than the current date and time.",400));
       }
       endDate = new Date(endDate);
       if (endDate <= startDate) {
         // End date is not valid
-        return next(new ErrorResponse("End date must be greater than the start date."));
+        return next(new ErrorResponse("End date must be greater than the start date.",400));
       }
       const leaveDaysRequested = getWeekdayCount(startDate, endDate);
       let leavetaken;
@@ -68,30 +68,39 @@ const createLeave = asyncHandler(async(req,res,next)=>{
       const max = lvType.maximumDays
 
       const total = totalDaysTaken + leaveDaysRequested
-    console.log( total,max)
+    
       if (total > max)
       return next(new ErrorResponse(`You have exceeded your leave limit for ${leaveType}`,400));
       const leaveRequest = await Leave.create({startDate,endDate,relieverName,leaveDaysRequested,
         leaveType,fullName,userId,company,email,displayPicture,leaveTaken:totalDaysTaken})
-console.log("old")
+
         res.status(201).json({success:true,msg:"successfully created a leave",data:leaveRequest})
 })
 
 const createLeaveType = asyncHandler(async(req,res,next)=>{
+  if(req.user.role !== "HR"){
+    return next(new ErrorResponse("You do not have permission to carry out this operation"));
+}
     const {leaveType,maximumDays} = req.body
-    const company = req.user.company
+    const company = req.user.userId
     const createLeave = await CreateLeave.create({leaveType,maximumDays,company})
     res.status(201).json({success:true,msg:"successfully created a new leave type",data:createLeave})
 })
 
 const typeOfLeave = asyncHandler(async(req,res,next)=>{
-    const company = req.user.company
+  if(req.user.role !== "HR"){
+    return next(new ErrorResponse("You do not have permission to carry out this operation"));
+}
+    const company = req.user.userId
     const createLeave = await CreateLeave.find({company})
     res.status(200).json({success:true,msg:"successfully retrieved all leave types",data:createLeave})
 })
 
 const pendingHr = asyncHandler(async(req,res,next)=>{
-  const company = req.user.company
+  if(req.user.role !== "HR"){
+    return next(new ErrorResponse("You do not have permission to carry out this operation"));
+}
+  const company = req.user.userId
   const { page = 1, limit = 20, status, startDate, endDate } = req.query
 
   let query = {company};
@@ -110,7 +119,10 @@ const pendingHr = asyncHandler(async(req,res,next)=>{
 })
 
 const approvedHr = asyncHandler(async(req,res,next)=>{
-  const company = req.user.company
+  if(req.user.role !== "HR"){
+    return next(new ErrorResponse("You do not have permission to carry out this operation"));
+}
+  const company = req.user.userId
   const { page = 1, limit = 20, status, startDate, endDate } = req.query
 
   let query = {company};
@@ -129,7 +141,10 @@ const approvedHr = asyncHandler(async(req,res,next)=>{
 })
 
 const rejectedHr = asyncHandler(async(req,res,next)=>{
-  const company = req.user.company
+  if(req.user.role !== "HR"){
+    return next(new ErrorResponse("You do not have permission to carry out this operation"));
+}
+  const company = req.user.userId
   const { page = 1, limit = 20, status, startDate, endDate } = req.query
 
   let query = {company};
@@ -148,11 +163,18 @@ const rejectedHr = asyncHandler(async(req,res,next)=>{
 })
 
 const updateHr = asyncHandler(async(req,res,next)=>{
+  if(req.user.role !== "HR"){
+    return next(new ErrorResponse("You do not have permission to carry out this operation"));
+}
   const {status,comment} = req.body
  const leaveId = req.params.id
   const request = await Leave.findById(leaveId)
+ 
   if (!request) {
     return next(new ErrorResponse("request does not exist",400));
+  }
+  if(request.company != req.user.userId){
+    return next(new ErrorResponse("You do not have permission to carry out this operation"));
   }
   if(status === "Approved"){
     request.hrStatus = "Approved";

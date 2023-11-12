@@ -1,0 +1,26 @@
+const express = require("express")
+const {createAward,nominate,getHighestNominee,vote,voteResult,leaderBoardHr,leaderBoard,employeeAwardDashboard,resetAward,winners,recentWinner,latestAward,yournominee,latestAwardHr,latestwinnerHr,totalAward,winnersHr} = require("../controllers/award")
+const {authorize,access}= require("../middlewares/auth")
+const uploadPicture = require("../utils/pictureUpload")
+
+const router = express.Router()
+
+router.post("/create-award",authorize,createAward)
+router.post("/nominate",authorize,nominate)
+router.post("/vote",authorize,vote)
+router.get("/highest-nominee/:award",authorize,getHighestNominee)
+router.get("/vote-result/:award",authorize,voteResult)
+router.get("/leaders-hr",authorize,leaderBoardHr)
+router.get("/leaders",authorize,leaderBoard)
+router.get("/award-dashboard",authorize,employeeAwardDashboard)
+router.delete("/reset/:award",authorize,resetAward)
+router.get("/previous-winners",authorize,winners)
+router.get("/previous-winners-hr",authorize,winnersHr)
+router.get("/total-awards",authorize,totalAward)
+router.get("/recent-winner",authorize,recentWinner)
+router.get("/recent-award",authorize,latestAward)
+router.get("/recent-award-hr",authorize,latestAwardHr)
+router.get("/recent-winner-hr",authorize,latestwinnerHr)
+router.get("/your-nominee/:award",authorize,yournominee)
+
+module.exports = router

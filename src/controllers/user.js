@@ -182,7 +182,8 @@ const confirmEmail =  asyncHandler( async(req,res,next)=>{
               department: user.department,
               displayPicture: user.displayPicture,
               jobRole: user.jobRole,
-              company:user.company
+              company:user.company,
+              companyEmail:user.companyEmail
             },
             process.env.JWT_SECRET,
             { expiresIn: "30d" }
@@ -416,6 +417,13 @@ const getMe = asyncHandler(async(req,res,next)=>{
   res.status(200).json({success:true,msg:"User successfully retreived",data:user})
 })
 
+const getCompany = asyncHandler(async(req,res,next)=>{
+  const userId = req.user.userId
+  const user = await Company.findById(userId)
+  if(!user)  return next(new ErrorResponse("This Company does not exist"));
+  res.status(200).json({success:true,msg:"Company successfully retreived",data:user})
+})
+
 
 
 
@@ -423,4 +431,4 @@ const getMe = asyncHandler(async(req,res,next)=>{
 
 
 
-module.exports = {registerCompany,confirmEmail,login,createUser,updateEmployeeProfile,confirmUserEmail,resetPassword,choosePlan,getMe}
+module.exports = {registerCompany,confirmEmail,login,createUser,updateEmployeeProfile,confirmUserEmail,resetPassword,choosePlan,getMe,getCompany}

@@ -49,7 +49,6 @@ fullName: {
   },
   department: {
     type: String,
-    enum: ["Operations", "Sales", "Engineering", "Product", "Growth", "Marketing", "Agent"],
   },
   address: {
     type: String,

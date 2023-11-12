@@ -66,6 +66,11 @@ const companySchema = mongoose.Schema(
         default:false
     },
     confirmationCode: String,
+    role:{
+      type:String,
+      default:"HR"
+  },
+
   },
   { timestamps: true }
 );

@@ -15,15 +15,18 @@ const errorHandler = require("./src/middlewares/errorHandler")
 
 const userRouter = require("./src/routers/userRoute")
 const leaveRouter = require("./src/routers/leaveRoute")
+const awardRouter = require("./src/routers/awardRoute")
+const task = require("./src/jobs/cron")
 
 // app.use(cookieparser())
 
 connectDb()
 
 app.use(cors())
-
+task.start()
 app.use("/api/v1/registeration",userRouter)
 app.use("/api/v1/leave",leaveRouter)
+app.use("/api/v1/award",awardRouter)
 
 app.use(errorHandler)
 
