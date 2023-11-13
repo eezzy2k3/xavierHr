@@ -16,6 +16,7 @@ const errorHandler = require("./src/middlewares/errorHandler")
 const userRouter = require("./src/routers/userRoute")
 const leaveRouter = require("./src/routers/leaveRoute")
 const awardRouter = require("./src/routers/awardRoute")
+const wellnessRouter = require("./src/routers/eventRoute")
 const task = require("./src/jobs/cron")
 
 // app.use(cookieparser())
@@ -27,6 +28,7 @@ task.start()
 app.use("/api/v1/registeration",userRouter)
 app.use("/api/v1/leave",leaveRouter)
 app.use("/api/v1/award",awardRouter)
+app.use("/api/v1/wellness",wellnessRouter)
 
 app.use(errorHandler)
 

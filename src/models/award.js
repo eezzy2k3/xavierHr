@@ -38,6 +38,7 @@ mongoosePaginate.paginate.options = {
      
       company: {
         type: mongoose.Schema.Types.ObjectId,
+        ref: 'Company', 
       },
       NumberOfEmployee: {
         type: Number,

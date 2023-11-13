@@ -67,9 +67,9 @@ const nominate = asyncHandler(async(req,res,next)=>{
 })
 
 const vote = asyncHandler(async(req,res,next)=>{
-    // if(req.user.role !== "Employee"){
-    //     return next(new ErrorResponse("You cannot take part in this process",400)); 
-    // }
+    if(req.user.role !== "Employee"){
+        return next(new ErrorResponse("You cannot take part in this process",400)); 
+    }
     const company = req.user.company
     const voter = req.user.userId
     const  {nominatedUser,award} = req.body
@@ -77,15 +77,15 @@ const vote = asyncHandler(async(req,res,next)=>{
     if(!mainAward){
         return next(new ErrorResponse("This Award does not exist",400)); 
     }
-    // if(mainAward.company !== company){
-    //     return next(new ErrorResponse("You cannot take part in this process",400)); 
-    // }
+    if(mainAward.company !== company){
+        return next(new ErrorResponse("You cannot take part in this process",400)); 
+    }
     const now = moment().format('YYYY MM DD HH mm')
     
     const endVoting = mainAward.endVoting
     
     const endNomination = mainAward.endNomination
-    console.log(now,endNomination)
+    
     if(endNomination>now){
         return next(new ErrorResponse("Nomination is still on going!",400)); 
     }
@@ -240,9 +240,21 @@ const employeeAwardDashboard = asyncHandler(async(req,res,next)=>{
 
 const resetAward = asyncHandler(async(req,res,next)=>{
   if(req.user.role !== "HR"){
-    return next(new ErrorResponse("You are cannot carry out this operation",400)); 
+    return next(new ErrorResponse("You cannot carry out this operation",400)); 
   }
   const award = req.params.award
+  const aw = await Award.findById(award)
+  if(!aw){
+    return next(new ErrorResponse("This award does not exist",400)); 
+  }
+if(aw.company != req.user.userId){
+  return next(new ErrorResponse("You cannot carry out this operation",400)); 
+}
+const now = moment().format('YYYY MM DD HH mm')
+const endVoting = aw.endVoting
+if(now > endVoting){
+  return next(new ErrorResponse("You cannot carry out this operation as voting as ended and winner emerged",400)); 
+}
   const reset = await Voting.deleteMany({award})
   res.status(200).json({success:true,msg:`You have successfully reset the voting`,data:{}})
 })

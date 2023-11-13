@@ -32,6 +32,7 @@ mongoosePaginate.paginate.options = {
       },
       company: {
         type: mongoose.Schema.Types.ObjectId,
+        ref: 'Company', 
       },
       leaveType: {
         type: String,

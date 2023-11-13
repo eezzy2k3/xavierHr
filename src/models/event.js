@@ -19,23 +19,49 @@ mongoosePaginate.paginate.options = {
     },
   };
   
-  const leaveSchema = new mongoose.Schema(
+  const eventSchema = new mongoose.Schema(
     {
-      leaveType: {
+      eventName: {
         type: String,
       },
-      maximumDays: {
-        type: Number,
+      link: {
+        type: String,
+      },
+    location: {
+        type: String
       },
       company: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Company', 
       },
+      category: {
+        type: String,
+      },
+      startDate: {
+        type: String,
+      },
+      endDate: {
+        type: String,
+      },
+      
+    
+      
+      image: {
+        type: String,
+      },
+      
+    
+      description: {
+        type: String,
+      },
+      
+    
+    
     },
     { timestamps: true }
   );
 
-  leaveSchema.plugin(mongoosePaginate);
-const CreateLeave = mongoose.model("CreateLeave", leaveSchema);
+  eventSchema.plugin(mongoosePaginate);
+const Event = mongoose.model("Event", eventSchema);
 
-module.exports = CreateLeave;
+module.exports = Event;
