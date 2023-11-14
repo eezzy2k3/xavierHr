@@ -189,8 +189,8 @@ const votes = await Voting.aggregate([
 })
 
 const leaderBoard = asyncHandler(async(req,res,next)=>{
-
-  const query = {company:req.user.company}
+  const company = req.user.company
+  const query = {company}
   const leaders = await Leader.paginate(query, {
     page : 1,
     limit : 10,
@@ -201,8 +201,8 @@ const leaderBoard = asyncHandler(async(req,res,next)=>{
 })
 
 const leaderBoardHr = asyncHandler(async(req,res,next)=>{
-
-  const query = {company:req.user.userId}
+  const company = req.user.userId
+  const query = {company}
 
   const leaders = await Leader.paginate(query, {
     page :1,

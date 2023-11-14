@@ -98,6 +98,9 @@ fullName: {
     type: Boolean,
     default: false,
   },
+  averageRating:{
+    type:Number
+  },
   nextofKinEmail: {
     type: String,
   },
