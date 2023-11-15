@@ -54,7 +54,7 @@ const reviewerReview = asyncHandler(async(req,res,next)=>{
          assigned.taskCompleted =  assigned.taskCompleted + numberOftaskCompleted
          await assigned.save()
         }else{
-         await AssignedTask.create({employee,taskAssigned:numberOftaskAssigned, taskCompleted:numberOftaskCompleted})
+         await AssignedTask.create({employee,taskAssigned:numberOftaskAssigned, taskCompleted:numberOftaskCompleted,company})
         }
 
         res.status(201).json({success:true,msg:`You have successfully  reviewed an assesment`,data:review})
@@ -102,7 +102,7 @@ const peerTopeer = asyncHandler(async(req,res,next)=>{
 })
 
 const myAssessment = asyncHandler(async(req,res,next)=>{
-    const  employee = "654502b729ed99d6d33cffe7"
+    const  employee = req.user.userId
     let query = {employee}
     const { page = 1, limit = 20, quarter } = req.query;
     if(quarter){
@@ -129,8 +129,25 @@ const employeeMatrics = asyncHandler(async(req,res,next)=>{
 })
 
 const taskMetrics = asyncHandler(async(req,res,next)=>{
-    
+    const company = req.user.userId
+    const task = await  AssignedTask.aggregate([
+        {
+          $match: {company :new mongoose.Types.ObjectId(company) },
+        },
+        {
+            $group: {
+                _id: null,
+                totalAssigned: { $sum: '$taskAssigned' }, 
+                totalCompleted: { $sum: '$taskCompleted' }, 
+              },
+        },
+       
+      ])
+      const uncompleted = task[0].totalAssigned - task[0].totalCompleted
+      const data = {totalAssigned:task[0].totalAssigned,totalCompleted:task[0].totalCompleted,uncompleted}
+      console.log(task)
+      res.status(200).json({success:true,msg:`You have successfully retreived employee metrics`,data})
 })
 
 
-module.exports = {assignReview,reviewerReview,employeeReview,peerTopeer,myAssessment,employeeMatrics}
+module.exports = {assignReview,reviewerReview,employeeReview,peerTopeer,myAssessment,employeeMatrics,taskMetrics}

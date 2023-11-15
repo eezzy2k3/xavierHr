@@ -25,6 +25,10 @@ mongoosePaginate.paginate.options = {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User', 
           },
+          company: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Company', 
+          },
           taskAssigned: {
             type: Number,
           },

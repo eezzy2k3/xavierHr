@@ -320,17 +320,17 @@ const updateEmployeeProfile = asyncHandler(async(req,res,next)=>{
 
     // if no user found throw error
     if (!user) {
-      return next(new ErrorResponse("user does not exist"));
+      return next(new ErrorResponse("user does not exist",400));
     }
 
     // if user is not confirmed throw error
     if (user.isConfirmed === false) {
-      return next(new ErrorResponse("Please confirm your account"));
+      return next(new ErrorResponse("Please confirm your account",400));
     }
 
     // if user has set password already throw error
     if (user.isPasswordSet === true) {
-      return next(new ErrorResponse("password already set"));
+      return next(new ErrorResponse("password already set",400));
     }
 
     // hash password
@@ -361,7 +361,7 @@ const resetPassword = asyncHandler(async(req,res,next)=>{
   const { email } = req.body;
 
   if (!email) {
-    return next(new ErrorResponse("Please provide an email"));
+    return next(new ErrorResponse("Please provide an email",400));
   }
 
   const user = await User.findOne({ email: email.toLowerCase() });
@@ -404,7 +404,7 @@ const choosePlan = asyncHandler(async(req,res,next)=>{
   const { plan } = req.body
   const userId = req.user.userId
   const company = await Company.findById(userId)
-  if(!company)  return next(new ErrorResponse("This Organisation does not exist"));
+  if(!company)  return next(new ErrorResponse("This Organisation does not exist",404));
   company. SubscriptionType = plan
   await company.save()
   res.status(200).json({success:true,msg:"Subscription Plan successfully selected",data:company})
@@ -413,14 +413,14 @@ const choosePlan = asyncHandler(async(req,res,next)=>{
 const getMe = asyncHandler(async(req,res,next)=>{
   const userId = req.user.userId
   const user = await User.findById(userId).populate({path:"company",select:"companyName logo"})
-  if(!user)  return next(new ErrorResponse("This Employee does not exist"));
+  if(!user)  return next(new ErrorResponse("This Employee does not exist",404));
   res.status(200).json({success:true,msg:"User successfully retreived",data:user})
 })
 
 const getCompany = asyncHandler(async(req,res,next)=>{
   const userId = req.user.userId
   const user = await Company.findById(userId)
-  if(!user)  return next(new ErrorResponse("This Company does not exist"));
+  if(!user)  return next(new ErrorResponse("This Company does not exist",404));
   res.status(200).json({success:true,msg:"Company successfully retreived",data:user})
 })
 
