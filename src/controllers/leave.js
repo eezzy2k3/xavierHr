@@ -112,7 +112,6 @@ const pendingHr = asyncHandler(async(req,res,next)=>{
     page,
     limit,
     sort: { createdAt: -1 },
-    populate: { path: "userId", select: "fullName department displayPicture" },
   });
   res.status(200).json({success:true,msg:"successfully retrieved all leave types",data:request})
 })
@@ -135,7 +134,6 @@ const approvedHr = asyncHandler(async(req,res,next)=>{
     page,
     limit,
     sort: { createdAt: -1 },
-    populate: { path: "userId", select: "fullName department displayPicture" },
   });
   res.status(200).json({success:true,msg:"successfully retrieved all leave types",data:request})
 })
@@ -158,7 +156,6 @@ const rejectedHr = asyncHandler(async(req,res,next)=>{
     page,
     limit,
     sort: { createdAt: -1 },
-    populate: { path: "userId", select: "fullName department displayPicture" },
   });
   res.status(200).json({success:true,msg:"successfully retrieved all leave types",data:request})
 })
