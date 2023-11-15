@@ -84,5 +84,53 @@ const employeeReview = asyncHandler(async(req,res,next)=>{
         res.status(200).json({success:true,msg:`You have successfully created your assesment`,data:review})
 })
 
+const peerTopeer = asyncHandler(async(req,res,next)=>{
+    const  reviewer = req.user.userId
+    let query = {reviewer}
+    const { page = 1, limit = 20, quater } = req.query;
+    if(quater){
+        query.quater = quater
+    }
+    const p2p = await AssignReview.paginate(query, {
+        page,
+        limit,
+        sort: { createdAt: -1 },
+        populate: { path: "employee", select: "fullName department displayPicture " },
+          
+      });
+      res.status(200).json({success:true,msg:`You have successfully retreived your peer to peer`,data:p2p})
+})
 
-module.exports = {assignReview,reviewerReview,employeeReview}
+const myAssessment = asyncHandler(async(req,res,next)=>{
+    const  employee = "654502b729ed99d6d33cffe7"
+    let query = {employee}
+    const { page = 1, limit = 20, quarter } = req.query;
+    if(quarter){
+        query.quarter = quarter
+    }
+    const p2p = await Review.paginate(query, {
+        page,
+        limit,
+        sort: { createdAt: -1 },
+        populate: { path: "reviewer", select: "fullName department displayPicture" },
+          
+      });
+      res.status(200).json({success:true,msg:`You have successfully retreived all your reviews`,data:p2p})
+})
+
+const employeeMatrics = asyncHandler(async(req,res,next)=>{
+    const company = req.user.userId
+    const male = await User.countDocuments({company,genedr:"Male"})
+    const female = await User.countDocuments({company,genedr:"Female"})
+    const notdefined = await User.countDocuments({company,genedr:null||undefined})
+    const total = await User.countDocuments({company})
+    const data = {male,female,notdefined,total}
+    res.status(200).json({success:true,msg:`You have successfully retreived employee metrics`,data})
+})
+
+const taskMetrics = asyncHandler(async(req,res,next)=>{
+    
+})
+
+
+module.exports = {assignReview,reviewerReview,employeeReview,peerTopeer,myAssessment,employeeMatrics}

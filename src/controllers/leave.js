@@ -88,10 +88,8 @@ const createLeaveType = asyncHandler(async(req,res,next)=>{
 })
 
 const typeOfLeave = asyncHandler(async(req,res,next)=>{
-  if(req.user.role !== "HR"){
-    return next(new ErrorResponse("You do not have permission to carry out this operation"));
-}
-    const company = req.user.userId
+
+    const company = req.user.company
     const createLeave = await CreateLeave.find({company})
     res.status(200).json({success:true,msg:"successfully retrieved all leave types",data:createLeave})
 })
