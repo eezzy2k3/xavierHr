@@ -19,6 +19,9 @@ const allUsers = asyncHandler(async(req,res,next)=>{
 })
 
 const allUsersHr = asyncHandler(async(req,res,next)=>{
+  if(req.user.role !== "HR"){
+    return next(new ErrorResponse("You do not have permission to carry out this operation"));
+}
     const company = req.user.userId
     const { page = 1, limit = 20, status } = req.query;
     let query = {company};
@@ -51,8 +54,7 @@ const updateHr = asyncHandler(async(req,res,next)=>{
         nextofKinNumber,
         nextofKinEmail,
         middleName,
-        firstName,
-        lastName,
+        fullName,
         managerFirstName,
         managerLastName,
         managerMiddleName,
@@ -61,7 +63,8 @@ const updateHr = asyncHandler(async(req,res,next)=>{
         managerGender,
         managerEmail,
         managerContact,
-        managerNumber
+        managerNumber,
+        nationality
       } = req.body;
       const userId = req.params.userId
 
@@ -71,7 +74,7 @@ const updateHr = asyncHandler(async(req,res,next)=>{
 
       // if no user found throw error
       if (!user) {
-        throw new ResourceNotFoundError("user does not exist");
+        return next(new ErrorResponse("user does not exist",404));
       }
       if(user.company != req.user.userId){
         return next(new ErrorResponse("You do not have permission to carry out this operation"));
@@ -90,6 +93,9 @@ const updateHr = asyncHandler(async(req,res,next)=>{
       }
       if (address) {
         user.address = address;
+      }
+      if ( nationality) {
+        user.nationality = nationality;
       }
       if (nextofKin) {
         user.nextofKin = nextofKin;
@@ -162,4 +168,45 @@ const updateHr = asyncHandler(async(req,res,next)=>{
     res.status(200).json({success:true,msg:"Users successfully updated an employee profile",data:user})
 })
 
-module.exports = {allUsers,allUsersHr}
+const employeeMatrics = asyncHandler(async(req,res,next)=>{
+  if(req.user.role !== "HR"){
+    return next(new ErrorResponse("You do not have permission to carry out this operation"));
+}
+  const company = req.user.userId
+  const active = await User.countDocuments({company,status:"Active"})
+  const onboarding = await User.countDocuments({company,status:"Invited"})
+  const deactivated = await User.countDocuments({company,status:"Deactivated"})
+  const leave = await User.countDocuments({company,status:"Leave"})
+  const total = await User.countDocuments({company})
+  const engineering = await User.countDocuments({company,department:"Engineering"})
+  const product = await User.countDocuments({company,status:"Product"})
+  const growth = await User.countDocuments({company,department:"Growth"||"Strategy"})
+  const marketing = await User.countDocuments({company,department:"Marketing"})
+  const sales = await User.countDocuments({company,department:"Sales"})
+  const notdefined = await User.countDocuments({company,department:null || undefined})
+  const totalDepartment = 6
+  const status = {active,onboarding,deactivated,leave,total}
+  const department = {engineering,product,growth,marketing,sales,notdefined,totalDepartment}
+  const data = {status,department}
+  res.status(200).json({success:true,msg:`You have successfully retreived employee metrics`,data})
+})
+
+const deactivate = asyncHandler(async(req,res,next)=>{
+  if(req.user.role !== "HR"){
+    return next(new ErrorResponse("You do not have permission to carry out this operation"));
+}
+  const userId = req.params.userId
+  const user = await User.findById(userId)
+  if (!user) {
+    return next(new ErrorResponse("user does not exist",404));
+  }
+  if(user.company != req.user.userId){
+    return next(new ErrorResponse("You do not have permission to carry out this operation"));
+}
+  user.isEmployed = false
+  user.status = "Deactivated"
+  await user.save()
+  res.status(200).json({success:true,msg:`You have successfully deactivated ${user.fullName}`,data:user})
+})
+
+module.exports = {allUsers,allUsersHr,updateHr,employeeMatrics,deactivate}

@@ -114,7 +114,47 @@ const pendingHr = asyncHandler(async(req,res,next)=>{
     limit,
     sort: { createdAt: -1 },
   });
-  res.status(200).json({success:true,msg:"successfully retrieved all leave types",data:request})
+  
+  if (!request.docs || request.docs.length === 0) {
+    res.status(200).json({
+      success: true,
+      msg: "No leave requests found for the specified criteria",
+      data: request,
+    });
+  } else {
+    const paginatedLeave = await Promise.all(
+      request.docs.map(async (leave) => {
+        const { userId, leaveType } = leave; // Extract user ID and leave type from the paginated result
+  
+        const lvType = await CreateLeave.findOne({ leaveType, company });
+        const leavetaken = await Leave.find({ leaveType, userId });
+  
+        let totalDaysTaken = 0;
+  
+        // Calculate the total days taken for the specific leave type
+        for (const request of leavetaken) {
+          totalDaysTaken += request.leaveDayApproved;
+        }
+  
+        const max = lvType?.maximumDays;
+        const daysleft = max - totalDaysTaken;
+  
+        return {
+          ...leave.toObject(),
+          totalDaysTaken,
+          max,
+          daysleft,
+        };
+      })
+    );
+  
+    res.status(200).json({
+      success: true,
+      msg: "successfully retrieved paginated leave requests with daysleft",
+      data: paginatedLeave,
+    });
+  }
+  
 })
 
 const approvedHr = asyncHandler(async(req,res,next)=>{
@@ -136,7 +176,47 @@ const approvedHr = asyncHandler(async(req,res,next)=>{
     limit,
     sort: { createdAt: -1 },
   });
-  res.status(200).json({success:true,msg:"successfully retrieved all leave types",data:request})
+  
+  if (!request.docs || request.docs.length === 0) {
+    res.status(200).json({
+      success: true,
+      msg: "No leave requests found for the specified criteria",
+      data: request,
+    });
+  } else {
+    const paginatedLeave = await Promise.all(
+      request.docs.map(async (leave) => {
+        const { userId, leaveType } = leave; // Extract user ID and leave type from the paginated result
+  
+        const lvType = await CreateLeave.findOne({ leaveType, company });
+        const leavetaken = await Leave.find({ leaveType, userId });
+  
+        let totalDaysTaken = 0;
+  
+        // Calculate the total days taken for the specific leave type
+        for (const request of leavetaken) {
+          totalDaysTaken += request.leaveDayApproved;
+        }
+  
+        const max = lvType?.maximumDays;
+        const daysleft = max - totalDaysTaken;
+  
+        return {
+          ...leave.toObject(),
+          totalDaysTaken,
+          max,
+          daysleft,
+        };
+      })
+    );
+  
+    res.status(200).json({
+      success: true,
+      msg: "successfully retrieved paginated leave requests with daysleft",
+      data: paginatedLeave,
+    });
+  }
+  
 })
 
 const rejectedHr = asyncHandler(async(req,res,next)=>{
@@ -158,7 +238,47 @@ const rejectedHr = asyncHandler(async(req,res,next)=>{
     limit,
     sort: { createdAt: -1 },
   });
-  res.status(200).json({success:true,msg:"successfully retrieved all leave types",data:request})
+  
+  if (!request.docs || request.docs.length === 0) {
+    res.status(200).json({
+      success: true,
+      msg: "No leave requests found for the specified criteria",
+      data: request,
+    });
+  } else {
+    const paginatedLeave = await Promise.all(
+      request.docs.map(async (leave) => {
+        const { userId, leaveType } = leave; // Extract user ID and leave type from the paginated result
+  
+        const lvType = await CreateLeave.findOne({ leaveType, company });
+        const leavetaken = await Leave.find({ leaveType, userId });
+  
+        let totalDaysTaken = 0;
+  
+        // Calculate the total days taken for the specific leave type
+        for (const request of leavetaken) {
+          totalDaysTaken += request.leaveDayApproved;
+        }
+  
+        const max = lvType?.maximumDays;
+        const daysleft = max - totalDaysTaken;
+  
+        return {
+          ...leave.toObject(),
+          totalDaysTaken,
+          max,
+          daysleft,
+        };
+      })
+    );
+  
+    res.status(200).json({
+      success: true,
+      msg: "successfully retrieved paginated leave requests with daysleft",
+      data: paginatedLeave,
+    });
+  }
+  
 })
 
 const updateHr = asyncHandler(async(req,res,next)=>{

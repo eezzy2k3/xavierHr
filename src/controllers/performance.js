@@ -120,9 +120,9 @@ const myAssessment = asyncHandler(async(req,res,next)=>{
 
 const employeeMatrics = asyncHandler(async(req,res,next)=>{
     const company = req.user.userId
-    const male = await User.countDocuments({company,genedr:"Male"})
-    const female = await User.countDocuments({company,genedr:"Female"})
-    const notdefined = await User.countDocuments({company,genedr:null||undefined})
+    const male = await User.countDocuments({company,gender:"Male"})
+    const female = await User.countDocuments({company,gender:"Female"})
+    const notdefined = await User.countDocuments({company,gender:null||undefined})
     const total = await User.countDocuments({company})
     const data = {male,female,notdefined,total}
     res.status(200).json({success:true,msg:`You have successfully retreived employee metrics`,data})

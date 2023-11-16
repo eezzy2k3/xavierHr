@@ -120,7 +120,7 @@ nationality: {
   },
   status: {
     type: String,
-    enum: ["Invited", "Active", "Deactivated"],
+    enum: ["Invited", "Active", "Deactivated","Leave"],
     default: "Invited",
   },
   isEmployed: {
