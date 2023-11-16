@@ -44,6 +44,9 @@ mongoosePaginate.paginate.options = {
       endDate: {
         type: String,
       },
+      reason: {
+        type: String,
+      },
       leaveDaysRequested: {
         type: Number,
       },

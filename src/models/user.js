@@ -41,6 +41,9 @@ fullName: {
   displayPicture: {
     type: String,
   },
+nationality: {
+    type: String,
+  },
   dob: {
     type: String,
   },
@@ -53,7 +56,10 @@ fullName: {
   address: {
     type: String,
   },
-  nextofKin: {
+  nextofKinFirstName: {
+    type: String,
+  },
+  nextofKinLastName: {
     type: String,
   },
   alternativeNumber: {
@@ -63,6 +69,33 @@ fullName: {
     type: String,
   },
   nextofKinNumber: {
+    type: String,
+  },
+  managerFirstName: {
+    type: String,
+  },
+  managerLastName: {
+    type: String,
+  },
+  managerMiddleName: {
+    type: String,
+  },
+ managerDepartment: {
+    type: String,
+  },
+  managerJobRole: {
+    type: String,
+  },
+  managerGender: {
+    type: String,
+  },
+  managerEmail: {
+    type: String,
+  },
+  managerContact: {
+    type: String,
+  },
+  managerNumber: {
     type: String,
   },
   confirmationCode: String,

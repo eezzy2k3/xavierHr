@@ -91,6 +91,47 @@ const deleteEvent = asyncHandler(async(req,res,next)=>{
     await Event.findByIdAndDelete(eventId)
     res.status(200).json({success:true,msg:"successfully deleted an event",data:{}})
 })
+
+const updateEvent = asyncHandler(async(req,res,next)=>{
+    if(req.user.role !== "HR"){
+        return next(new ErrorResponse("You do not have permission to carry out this operation"));
+    }
+    const eventId = req.params.event
+    let {eventName,link,location,category,startDate,endDate,description}  = req.body
+    const event = await Event.findById(eventId)
+    if(!event){
+        return next(new ErrorResponse("This Event does not not exist"));
+    }
+    if(event.company != req.user.userId){
+        return next(new ErrorResponse("You do not have permission to carry out this operation"));
+    }
+    if(eventName){
+        event.eventName = eventName
+    }
+    if(link){
+        event.link = link
+    }
+    if(location){
+        event.location = location
+    }
+    if(category){
+        event.category = category
+    }
+    if(startDate){
+        event.startDate = moment(startDate).format('YYYY MM DD')
+    }
+    if(endDate){
+        event.endDate = moment(endDate).format('YYYY MM DD')
+    }
+    if(description){
+        event.description = description
+    }
+
+    await event.save()
+
+    res.status(200).json({success:true,msg:"successfully updated an event",data:event})
+
+})
 const createTraining = asyncHandler(async(req,res,next)=>{
     if(req.user.role !== "HR"){
         return next(new ErrorResponse("You do not have permission to carry out this operation"));
@@ -167,4 +208,42 @@ const deleteTraining = asyncHandler(async(req,res,next)=>{
     res.status(200).json({success:true,msg:"successfully deleted a training",data:{}})
 })
 
-module.exports = {createEvent,allEvents,allEventsHr,createTraining,allTrainings,allTrainingsHr,deleteTraining,deleteEvent }
+const updateTraining = asyncHandler(async(req,res,next)=>{
+    if(req.user.role !== "HR"){
+        return next(new ErrorResponse("You do not have permission to carry out this operation"));
+    }
+    const trainingId = req.params.training
+    let {trainingName,link,location,category,date,description} = req.body
+    const training = await Training.findById(trainingId)
+    if(!training){
+        return next(new ErrorResponse("This training does not not exist"));
+    }
+    if(training.company != req.user.userId){
+        return next(new ErrorResponse("You do not have permission to carry out this operation"));
+    }
+    if(trainingName){
+        training.trainingName = trainingName
+    }
+    if(link){
+        training.link = link
+    }
+    if(location){
+        training.location = location
+    }
+    if(category){
+        training.category = category
+    }
+    if(date){
+        trainng.date = moment(date).format('YYYY MM DD')
+    }
+    if(description){
+        training.description = description
+    }
+
+    await training.save()
+
+    res.status(200).json({success:true,msg:"successfully updated a training",data:training})
+
+})
+
+module.exports = {createEvent,allEvents,allEventsHr,createTraining,allTrainings,allTrainingsHr,deleteTraining,deleteEvent,updateEvent,updateTraining }

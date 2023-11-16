@@ -22,6 +22,7 @@ const createLeave = asyncHandler(async(req,res,next)=>{
         endDate,
         relieverName,
         leaveType,
+        reason
       } = req.body
       startDate = moment(startDate).format('YYYY MM DD');
       endDate = moment(endDate).format('YYYY MM DD');
@@ -50,7 +51,7 @@ const createLeave = asyncHandler(async(req,res,next)=>{
         
       
         if (leaveDaysRequested > maximumDays) return next(new ErrorResponse(`You have exceeded your leave limit for ${leaveType}`,400));
-        const leaveRequest = await Leave.create({startDate,endDate,relieverName, leaveDaysRequested,
+        const leaveRequest = await Leave.create({startDate,endDate,relieverName,reason, leaveDaysRequested,
             leaveType,fullName,userId,company,email,displayPicture,leaveTaken:0})
     
             res.status(201).json({success:true,msg:"successfully created a leave",data:leaveRequest})
@@ -71,7 +72,7 @@ const createLeave = asyncHandler(async(req,res,next)=>{
     
       if (total > max)
       return next(new ErrorResponse(`You have exceeded your leave limit for ${leaveType}`,400));
-      const leaveRequest = await Leave.create({startDate,endDate,relieverName,leaveDaysRequested,
+      const leaveRequest = await Leave.create({startDate,endDate,relieverName,reason,leaveDaysRequested,
         leaveType,fullName,userId,company,email,displayPicture,leaveTaken:totalDaysTaken})
 
         res.status(201).json({success:true,msg:"successfully created a leave",data:leaveRequest})
