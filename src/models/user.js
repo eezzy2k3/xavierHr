@@ -137,6 +137,9 @@ nationality: {
   nextofKinEmail: {
     type: String,
   },
+  nextofKinRelationship:{
+    type: String,
+  },
   serviceDocument: [
     {
       title: {

@@ -51,6 +51,7 @@ const updateHr = asyncHandler(async(req,res,next)=>{
         gender,
         address,
         nextofKin,
+        nextofKinRelationship,
         nextofKinContact,
         nextofKinNumber,
         nextofKinEmail,
@@ -157,8 +158,8 @@ const updateHr = asyncHandler(async(req,res,next)=>{
         user.managerEmail = managerEmail;
       }
 
-      if (managerContact) {
-        user.managerContact= managerContact;
+      if ( nextofKinRelationship) {
+        user. nextofKinRelationship =  nextofKinRelationship;
       }
 
       if ( managerNumber) {
@@ -230,6 +231,7 @@ const updateEmployee = asyncHandler(async(req,res,next)=>{
         managerEmail,
         managerContact,
         managerNumber,
+        nextofKinRelationship,
         nationality
       } = req.body;
       // const userId = req.user.userId
@@ -309,9 +311,10 @@ const updateEmployee = asyncHandler(async(req,res,next)=>{
         user.managerEmail = managerEmail;
       }
 
-      if (managerContact) {
-        user.managerContact= managerContact;
+      if ( nextofKinRelationship) {
+        user. nextofKinRelationship =  nextofKinRelationship;
       }
+
 
       if ( managerNumber) {
         user. managerNumber =  managerNumber;
