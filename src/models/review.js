@@ -123,6 +123,12 @@ mongoosePaginate.paginate.options = {
             type: String,
             enum: ["Q1","Q2","Q3","Q4"]
           },
+          startDate: {
+            type: String,
+          },
+          endDate: {
+            type: String,
+          },
           averageRating:{
             type:Number
           }

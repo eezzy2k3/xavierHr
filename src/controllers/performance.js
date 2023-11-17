@@ -43,14 +43,16 @@ const assignReview = asyncHandler(async(req,res,next)=>{
 })
 
 const reviewerReview = asyncHandler(async(req,res,next)=>{
-    const { employee, reviewer, numberOftaskAssigned, numberOftaskCompleted,collaborationReview,collaborationComment,
-        creativityReview, creativityComment,communicationReview,  communicationComment, timeManagementReview, timeManagementComment,problemSolvingReview, problemSolvingComment,quarter} = req.body
-    const company = req.user.company
+    let { employee, reviewer, numberOftaskAssigned, numberOftaskCompleted,collaborationReview,collaborationComment,
+        creativityReview, creativityComment,communicationReview,  communicationComment, timeManagementReview, timeManagementComment,problemSolvingReview, problemSolvingComment,quarter,endDate,startDate} = req.body
+        startDate = moment(startDate).format('YYYY MM DD')
+        endDate = moment(endDate).format('YYYY MM DD')
+        const company = req.user.company
     const answer = collaborationReview +  creativityReview + communicationReview + timeManagementReview + problemSolvingReview
     const Rating = answer/5
     const averageRating = Number(Rating.toFixed(1))
     const review = await Review.create({employee, reviewer, numberOftaskAssigned, numberOftaskCompleted,collaborationReview,collaborationComment,
-        creativityReview, creativityComment,communicationReview,  communicationComment, timeManagementReview, timeManagementComment,problemSolvingReview, problemSolvingComment,quarter,company,averageRating})
+        creativityReview, creativityComment,communicationReview,  communicationComment, timeManagementReview, timeManagementComment,problemSolvingReview, problemSolvingComment,quarter,company,averageRating,endDate,startDate})
         const assigned = await AssignedTask.findOne({employee})
         if(assigned){
          assigned.taskAssigned = assigned.taskAssigned + numberOftaskAssigned
@@ -68,6 +70,9 @@ const employeeReview = asyncHandler(async(req,res,next)=>{
     const { employeeCollaborationReview, employeeCollaborationComment,employeeCreativityReview,employeeCreativityComment, employeeCommunicationReview, employeeCommunicationComment,employeeTimeManagementReview,employeeTimeManagementComment,
         employeeProblemSolvingReview, employeeProblemSolvingComment} = req.body
         const review = await Review.findById(reviewId)
+        if (!review) {
+            return next(new ErrorResponse("review does not exist",404));
+          }
         if(req.user.userId != review.employee){
             return next(new ErrorResponse("You do not have permission to carry out this operation"));
         }
@@ -175,6 +180,17 @@ const reviewHr = asyncHandler(async(req,res,next)=>{
       res.status(200).json({success:true,msg:`You have successfully retreived a review`,data:p2p})
 })
 
+const getApeerReview = asyncHandler(async(req,res,next)=>{
+    const review = req.params.review
+    const peerReview = await AssignReview.findById(review).populate({ path: "employee", select: "fullName department displayPicture email jobRole averageRating status " })
+    if (!peerReview) {
+        return next(new ErrorResponse("this peer to peer review does not exist",404));
+      }
+    if(req.user.userId != peerReview.reviewer){
+        return next(new ErrorResponse("You do not have permission to carry out this operation"));
+    }
+    res.status(200).json({success:true,msg:`You have successfully retreived a review`,data:peerReview})
+})
 
 
-module.exports = {assignReview,reviewerReview,employeeReview,peerTopeer,myAssessment,employeeMatrics,taskMetrics,reviewHr}
+module.exports = {assignReview,reviewerReview,employeeReview,peerTopeer,myAssessment,employeeMatrics,taskMetrics,reviewHr,getApeerReview}
