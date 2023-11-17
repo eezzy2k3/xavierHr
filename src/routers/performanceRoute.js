@@ -1,5 +1,5 @@
 const express = require("express")
-const {assignReview,reviewerReview,employeeReview,peerTopeer,myAssessment,employeeMatrics,taskMetrics} = require("../controllers/performance")
+const {assignReview,reviewerReview,employeeReview,peerTopeer,myAssessment,employeeMatrics,taskMetrics,reviewHr} = require("../controllers/performance")
 const {authorize,access}= require("../middlewares/auth")
 const uploadPicture = require("../utils/pictureUpload")
 
@@ -12,6 +12,7 @@ router.get("/my-assessment",authorize,myAssessment)
 router.get("/metrics",authorize,employeeMatrics)
 router.get("/task-metrics",authorize,taskMetrics)
 router.post("/create-assesment-employee/:reviewId",authorize,employeeReview)
+router.get("/employee-review-hr/:employee",authorize,reviewHr)
 
 
 module.exports = router

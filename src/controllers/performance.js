@@ -22,6 +22,9 @@ const moment = require("moment")
 const mongoose = require("mongoose");
 
 const assignReview = asyncHandler(async(req,res,next)=>{
+    if(req.user.role !== "HR"){
+        return next(new ErrorResponse("You do not have permission to carry out this operation"));
+    }
     const employee = req.body.employee
     let {reviewer,quarter,endDate,startDate} = req.body
     const user = await User.findById(reviewer)
@@ -95,7 +98,7 @@ const peerTopeer = asyncHandler(async(req,res,next)=>{
         page,
         limit,
         sort: { createdAt: -1 },
-        populate: { path: "employee", select: "fullName department displayPicture " },
+        populate: { path: "employee", select: "fullName department displayPicture email jobRole averageRating status " },
           
       });
       res.status(200).json({success:true,msg:`You have successfully retreived your peer to peer`,data:p2p})
@@ -104,7 +107,7 @@ const peerTopeer = asyncHandler(async(req,res,next)=>{
 const myAssessment = asyncHandler(async(req,res,next)=>{
     const  employee = req.user.userId
     let query = {employee}
-    const { page = 1, limit = 20, quarter } = req.query;
+    const { page = 1, limit = 1, quarter } = req.query;
     if(quarter){
         query.quarter = quarter
     }
@@ -112,7 +115,7 @@ const myAssessment = asyncHandler(async(req,res,next)=>{
         page,
         limit,
         sort: { createdAt: -1 },
-        populate: { path: "reviewer", select: "fullName department displayPicture" },
+        populate: { path: "reviewer", select: "fullName department displayPicture jobRole" },
           
       });
       res.status(200).json({success:true,msg:`You have successfully retreived all your reviews`,data:p2p})
@@ -149,5 +152,29 @@ const taskMetrics = asyncHandler(async(req,res,next)=>{
       res.status(200).json({success:true,msg:`You have successfully retreived employee metrics`,data})
 })
 
+const reviewHr = asyncHandler(async(req,res,next)=>{
+    if(req.user.role !== "HR"){
+        return next(new ErrorResponse("You do not have permission to carry out this operation"));
+    }
+    const  employee = req.params.employee
+    const company = req.user.userId
+    let query = {employee,company}
+    const { page = 1, limit = 1, quater } = req.query;
+    if(quater){
+        query.quater = quater
+    }
+    const p2p = await Review.paginate(query, {
+        page,
+        limit,
+        sort: { createdAt: -1 },
+        populate: [
+            { path: "employee", select: "fullName department displayPicture jobRole " },
+            { path: "reviewer", select: "fullName department displayPicture jobRole " },
+        ]
+      });
+      res.status(200).json({success:true,msg:`You have successfully retreived a review`,data:p2p})
+})
 
-module.exports = {assignReview,reviewerReview,employeeReview,peerTopeer,myAssessment,employeeMatrics,taskMetrics}
+
+
+module.exports = {assignReview,reviewerReview,employeeReview,peerTopeer,myAssessment,employeeMatrics,taskMetrics,reviewHr}
