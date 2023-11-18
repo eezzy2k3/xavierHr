@@ -56,6 +56,21 @@ const companySchema = mongoose.Schema(
     logo: {
       type: String,
     },
+    jurisdiction: {
+      type: String,
+    },
+    rcNo: {
+      type: String,
+    },
+    taxIdNo: {
+      type: String,
+    },
+    address: {
+      type: String,
+    },
+    website: {
+      type: String,
+    },
     SubscriptionType: {
       type: String,
       enum:["earlyStage","startUp","growth"],

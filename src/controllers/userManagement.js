@@ -1,5 +1,9 @@
 const Company = require("../models/company")
 const User = require("../models/user")
+const Anonymous = require("../models/anonymous")
+const Game = require("../models/game")
+const Adventure = require("../models/adventure")
+const Affirmation = require("../models/affirmation")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 const sendMail = require("../utils/sendMail")
@@ -181,7 +185,7 @@ const employeeMatrics = asyncHandler(async(req,res,next)=>{
   const leave = await User.countDocuments({company,status:"Leave"})
   const total = await User.countDocuments({company})
   const engineering = await User.countDocuments({company,department:"Engineering"})
-  const product = await User.countDocuments({company,status:"Product"})
+  const product = await User.countDocuments({company,department:"Product"})
   const growth = await User.countDocuments({company,department:"Growth"||"Strategy"})
   const marketing = await User.countDocuments({company,department:"Marketing"})
   const sales = await User.countDocuments({company,department:"Sales"})
@@ -229,13 +233,12 @@ const updateEmployee = asyncHandler(async(req,res,next)=>{
         managerJobRole,
         managerGender,
         managerEmail,
-        managerContact,
         managerNumber,
         nextofKinRelationship,
         nationality
       } = req.body;
-      // const userId = req.user.userId
-      const userId = "653f5c12f825ead15e6c0a94"
+      const userId = req.user.userId
+     
 
       // check if user exist
 
@@ -340,4 +343,160 @@ const getUserHr = asyncHandler(async(req,res,next)=>{
   res.status(200).json({success:true,msg:`You have successfully retreived an employee`,data:user})
 })
 
-module.exports = {allUsers,allUsersHr,updateHr,employeeMatrics,deactivate,updateEmployee,getUserHr}
+const updateCompany = asyncHandler(async(req,res,next)=>{
+ 
+  const {
+    companyName,industry,country,phoneNumber,jurisdiction, rcNo,taxIdNo,address,website
+    } = req.body;
+    const userId = req.user.userId
+   
+
+    // check if user exist
+
+    const user = await Company.findById(userId);
+
+    // if no user found throw error
+    if (!user) {
+      return next(new ErrorResponse("Company does not exist",404));
+    }
+ 
+    if (phoneNumber) {
+      user.phoneNumber = phoneNumber;
+    }
+
+
+    if (address) {
+      user.address = address;
+    }
+    if ( industry) {
+      user.industry = industry;
+    }
+    if (companyName) {
+      user.companyName = companyName;
+    }
+    if (country) {
+      user.country = country;
+    }
+
+    if (jurisdiction) {
+      user.jurisdiction = jurisdiction;
+    }
+
+    if (rcNo) {
+      user.rcNo = rcNo;
+    }
+
+    if (taxIdNo) {
+      user.taxIdNo = taxIdNo;
+    }
+
+
+
+    if (website) {
+      user.website =   website;
+    }
+
+   
+
+  await user.save();
+  res.status(200).json({success:true,msg:" successfully updated company profile",data:user})
+})
+
+const createAnonymous = asyncHandler(async(req,res,next)=>{
+  if(req.user.role !== "Employee"){
+    return next(new ErrorResponse("You do not have permission to carry out this operation"));
+}
+  const message = req.body.message
+  const company = req.user.company
+  const anonymous = await Anonymous.create({message,company})
+  res.status(201).json({success:true,msg:"Anonymous message created",data:anonymous})
+})
+
+const getMessage = asyncHandler(async(req,res,next)=>{
+  if(req.user.role !== "HR"){
+    return next(new ErrorResponse("You do not have permission to carry out this operation"));
+}
+    const company = req.user.userId
+    const { page = 1, limit = 20, } = req.query;
+    let query = {company};
+
+    const message = await Anonymous.paginate(query, {
+        page,
+        limit,
+        sort: { createdAt: -1 },
+      });
+
+      res.status(200).json({success:true,msg:"message successfully retreived",data:message})
+})
+
+const createGame = asyncHandler(async(req,res,next)=>{
+  if(req.user.role !== "HR"){
+    return next(new ErrorResponse("You do not have permission to carry out this operation"));
+}
+  const {name,link} = req.body
+  const company = req.user.userId
+  const game = await Game.create({name,link,company})
+  res.status(201).json({success:true,msg:"game created",data:game})
+})
+
+const createAdvanture = asyncHandler(async(req,res,next)=>{
+  if(req.user.role !== "HR"){
+    return next(new ErrorResponse("You do not have permission to carry out this operation"));
+}
+  let {name,venue, date} = req.body
+  const company = req.user.userId
+  date =  moment(date).format("YYYY-MM-DD");
+  const adventure = await Adventure.create({name,venue,date,company})
+  res.status(201).json({success:true,msg:"adventure created",data:adventure})
+})
+
+const getAdventureHr = asyncHandler(async(req,res,next)=>{
+  if(req.user.role !== "HR"){
+    return next(new ErrorResponse("You do not have permission to carry out this operation"));
+}
+    const company = req.user.userId
+    const { page = 1, limit = 20, } = req.query;
+    let query = {company};
+
+    const adventure = await Adventure.paginate(query, {
+        page,
+        limit,
+        sort: { createdAt: -1 },
+      });
+
+      res.status(200).json({success:true,msg:"message successfully retreived",data:adventure})
+})
+
+const getAdventureEmployee = asyncHandler(async(req,res,next)=>{
+  
+    const company = req.user.company
+    const { page = 1, limit = 20, } = req.query;
+    let query = {company};
+
+    const adventure = await Adventure.paginate(query, {
+        page,
+        limit,
+        sort: { createdAt: -1 },
+      });
+
+      res.status(200).json({success:true,msg:"message successfully retreived",data:adventure})
+})
+
+const createAffirmation = asyncHandler(async(req,res,next)=>{
+  if(req.user.role !== "HR"){
+    return next(new ErrorResponse("You do not have permission to carry out this operation"));
+}
+  const message = req.body.message
+  const company = req.user.userId
+  const affirmation = await Affirmation.create({message,company})
+  res.status(201).json({success:true,msg:"Affirmation message created",data:affirmation})
+})
+
+const latestAffirmation = asyncHandler(async(req,res,next)=>{
+  const company = req.user.company
+  const affirmation = await Affirmation.findOne({company}).sort({ createdAt: -1 })
+  res.status(200).json({success:true,msg:"Affirmation message retreived",data:affirmation})
+})
+
+
+module.exports = {allUsers,allUsersHr,updateHr,employeeMatrics,deactivate,updateEmployee,getUserHr,updateCompany,getMessage,createAnonymous,createGame,createAdvanture,getAdventureHr,getAdventureEmployee,createAffirmation,latestAffirmation}
