@@ -305,6 +305,26 @@ const updateHr = asyncHandler(async(req,res,next)=>{
   request.hrApprovalDate = moment().format("YYYY-MM-DD HH:mm:ss");
   request.hrComment = comment;
  }
+ const message = ` <h1>Your leave request has been ${status}</h1>
+ <p>Dear ${request.fullName},</p>
+ <p>We are writing to inform you that your leave request has been ${status} by HR.</p>
+ ${
+   status === "Rejected"
+     ? `<p>Reason for rejection: ${comment}</p>`
+     : ""
+ }
+ <p>Please contact HR for further assistance or if you have any questions.</p>
+`
+ try{
+  await sendMail({
+       email:request.email,
+       subject:`Leave ${status}`,
+       message
+   })
+ }catch(error){
+   console.log(error.message);
+   next(new ErrorResponse("message could not be sent",500))
+ }
 await request.save()
 res.status(200).json({success:true,msg:"successfully updated leave status",data:request})
 })
