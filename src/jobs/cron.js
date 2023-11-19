@@ -4,6 +4,7 @@ const User = require("../models/user")
 const Award = require("../models/award")
 const Nominee = require("../models/nominee")
 const Voting = require("../models/voting")
+const Leave = require("../models/leave")
 const Winner = require("../models/winner")
 const Leader = require("../models/leader")
 const CreateLeave = require("../models/createLeave")
@@ -63,5 +64,48 @@ const task = cron.schedule('* * * * *', async(req,res) => {
     
   })
 
+  const task2 = cron.schedule('0 0 * * *', async(req,res) => {
+    const leaves = await Leave.find()
+    const now = moment().format('YYYY MM DD HH mm')
+    for(let i = 0; i<leaves.length; i++){
+      const startDate = moment(leaves[i].startDate,'ddd MMM DD YYYY HH:mm:ss Z').format('YYYY MM DD HH mm')
+      const endDate = moment(leaves[i].endDate,'ddd MMM DD YYYY HH:mm:ss Z').format('YYYY MM DD HH mm')
+      if(now >= startDate && endDate > now && leaves[i].hrStatus == "Approved"){
+        const userId = leaves[i].userId
+        const user = await User.findById(userId)
+        if(user.status == "Active"){
+          user.status = "Leave"
+        await user.save()
+        console.log("employee status changed to Leave")
+        }
+        
+       
+      }
+       
+        
+  }
+})
+
+const task3 = cron.schedule('0 0 * * *', async(req,res) => {
+  const leaves = await Leave.find()
+  const now = moment().format('YYYY MM DD HH mm')
+  for(let i = 0; i<leaves.length; i++){
+    const startDate = moment(leaves[i].startDate,'ddd MMM DD YYYY HH:mm:ss Z').format('YYYY MM DD HH mm')
+    const endDate = moment(leaves[i].endDate,'ddd MMM DD YYYY HH:mm:ss Z').format('YYYY MM DD HH mm')
+    if(now > startDate && now > endDate  && leaves[i].hrStatus == "Approved"){
+      const userId = leaves[i].userId
+      const user = await User.findById(userId)
+      if(user.status == "Leave"){
+        user.status = "Active"
+        await user.save()
+        console.log("employee status changed to Active")
+      }
+    
+    }
+     
+      
+}
+})
+
   
-  module.exports = task
+  module.exports = {task,task2,task3}

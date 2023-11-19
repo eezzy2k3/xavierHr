@@ -19,7 +19,7 @@ const awardRouter = require("./src/routers/awardRoute")
 const wellnessRouter = require("./src/routers/eventRoute")
 const performanceRouter = require("./src/routers/performanceRoute")
 const managementRouter = require("./src/routers/userManagementRoute")
-const task = require("./src/jobs/cron")
+const {task,task2,task3} = require("./src/jobs/cron")
 
 // app.use(cookieparser())
 
@@ -27,6 +27,8 @@ connectDb()
 
 app.use(cors())
 task.start()
+task2.start()
+task3.start()
 app.use("/api/v1/registeration",userRouter)
 app.use("/api/v1/leave",leaveRouter)
 app.use("/api/v1/award",awardRouter)

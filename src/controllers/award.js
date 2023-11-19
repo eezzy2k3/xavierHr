@@ -157,7 +157,7 @@ const votes = await Voting.aggregate([
     {
       $group: {
         _id: null,
-        total: { $sum: '$totalVotes' }, // Step 1: Calculate total votes
+        total: { $sum: '$totalVotes' }, 
         nominees: { $push: { nominatedUser: '$_id', totalVotes: '$totalVotes' } },
       },
     },
@@ -170,7 +170,7 @@ const votes = await Voting.aggregate([
         totalVotes: '$nominees.totalVotes',
         percentage: {
           $multiply: [
-            { $divide: ['$nominees.totalVotes', '$total'] }, // Step 2: Calculate percentage
+            { $divide: ['$nominees.totalVotes', '$total'] }, 
             100,
           ],
         },
