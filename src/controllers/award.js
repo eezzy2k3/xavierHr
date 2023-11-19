@@ -48,7 +48,7 @@ const nominate = asyncHandler(async(req,res,next)=>{
     if(!mainAward){
         return next(new ErrorResponse("This Award does not exist",400)); 
     }
-    if(mainAward.company !== company){
+    if(mainAward.company != company){
         return next(new ErrorResponse("You cannot take part in this process",400)); 
     }
     const now = moment().format('YYYY MM DD HH mm')
@@ -77,7 +77,7 @@ const vote = asyncHandler(async(req,res,next)=>{
     if(!mainAward){
         return next(new ErrorResponse("This Award does not exist",400)); 
     }
-    if(mainAward.company !== company){
+    if(mainAward.company != company){
         return next(new ErrorResponse("You cannot take part in this process",400)); 
     }
     const now = moment().format('YYYY MM DD HH mm')
