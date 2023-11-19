@@ -363,9 +363,29 @@ const totalAward = asyncHandler(async(req,res,next)=>{
   res.status(200).json({success:true,msg:`You have successfully retreived total awards created`,data:total})
 })
 
+const votingStatistic = asyncHandler(async(req,res,next)=>{
+  const award = req.params.award
+  if(req.user.role !== "HR"){
+    return next(new ErrorResponse("You cannot carry out this operation",400)); 
+  }
+  const allVoters = await Voting.find({award}).select('-nominatedUser -award -createdAt -updatedAt').populate({ path: "voter", select: "displayPicture" })
+  const numberofvoters = allVoters.length
+  const employeeThatNominated = await Nominee.find({award}).select('-nominatedUser -award -createdAt -updatedAt').populate({ path: "nominator", select: "displayPicture" })
+  const numberofemployeeThatNominated  = employeeThatNominated.length
+  const nominatedUserIds = await Nominee.find({ award })
+  .distinct('nominatedUser');
+
+const nominatedEmployee = await User.find({ _id: { $in: nominatedUserIds } })
+  .select('displayPicture');
+
+  const numberofNominatedEmployee = nominatedEmployee.length
+  const data = {allVoters,numberofvoters,employeeThatNominated,numberofemployeeThatNominated ,nominatedEmployee,numberofNominatedEmployee}
+  res.status(200).json({success:true,msg:`You have successfully retreived voting statistic`,data})
+})
 
 
 
 
 
-module.exports = {createAward,nominate,getHighestNominee,vote,voteResult,leaderBoardHr,leaderBoard,employeeAwardDashboard,resetAward,winners,recentWinner,latestAward,yournominee,latestAwardHr,latestwinnerHr,winnersHr,totalAward,winnersHr}
+
+module.exports = {createAward,nominate,getHighestNominee,vote,voteResult,leaderBoardHr,leaderBoard,employeeAwardDashboard,resetAward,winners,recentWinner,latestAward,yournominee,latestAwardHr,latestwinnerHr,winnersHr,totalAward,winnersHr,votingStatistic}
