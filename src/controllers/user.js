@@ -222,7 +222,7 @@ const confirmEmail =  asyncHandler( async(req,res,next)=>{
       const message = `<h1>Confirm your Email</h1>
       <h2>Hello ${user.email}</h2>
       <p>Use the confirmation code: ${user.confirmationCode} to confrim your Email by clicking on the link below</p>
-      <a href=http://localhost:3000/confirmemail/${user._id}> Click here</a>
+      <a href=https://hr-x.vercel.app/auth/employee-activate/${user._id}> Click here</a>
       </div>`
 
 // send token to email
