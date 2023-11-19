@@ -90,9 +90,8 @@ const task3 = cron.schedule('0 0 * * *', async(req,res) => {
   const leaves = await Leave.find()
   const now = moment().format('YYYY MM DD HH mm')
   for(let i = 0; i<leaves.length; i++){
-    const startDate = moment(leaves[i].startDate,'ddd MMM DD YYYY HH:mm:ss Z').format('YYYY MM DD HH mm')
     const endDate = moment(leaves[i].endDate,'ddd MMM DD YYYY HH:mm:ss Z').format('YYYY MM DD HH mm')
-    if(now > startDate && now > endDate  && leaves[i].hrStatus == "Approved"){
+    if( now > endDate  && leaves[i].hrStatus == "Approved"){
       const userId = leaves[i].userId
       const user = await User.findById(userId)
       if(user.status == "Leave"){
