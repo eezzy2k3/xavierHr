@@ -283,7 +283,7 @@ const winners = asyncHandler(async(req,res,next)=>{
 const recentWinner  = asyncHandler(async(req,res,next)=>{
   
 
-  const latestAward = await Winner.findOne({ company: req.user.userId })
+  const latestAward = await Winner.findOne({ company: req.user.company })
   .sort({ createdAt: -1 })
   .populate({ path: "award", select: "name description reward point" })
   .populate({ path: "winner", select: "fullName department displayPicture" })
