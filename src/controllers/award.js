@@ -81,6 +81,7 @@ const vote = asyncHandler(async(req,res,next)=>{
         return next(new ErrorResponse("You cannot take part in this process",400)); 
     }
     const now = moment().format('YYYY MM DD HH mm')
+    console.log(now)
     
     const endVoting = mainAward.endVoting
     
