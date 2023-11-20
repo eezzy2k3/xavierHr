@@ -51,7 +51,7 @@ const nominate = asyncHandler(async(req,res,next)=>{
     if(mainAward.company != company){
         return next(new ErrorResponse("You cannot take part in this process",400)); 
     }
-    const now = moment().format('YYYY MM DD HH mm')
+    const now = moment().utcOffset(60).format('YYYY MM DD HH mm');
     const endNomination = mainAward.endNomination
     if(now > endNomination){
         return next(new ErrorResponse("Nomination closed!",400)); 
@@ -81,12 +81,12 @@ const vote = asyncHandler(async(req,res,next)=>{
         return next(new ErrorResponse("You cannot take part in this process",400)); 
     }
     const now = moment().utcOffset(60).format('YYYY MM DD HH mm');
-    console.log(now)
+   
     
     const endVoting = mainAward.endVoting
     
     const endNomination = mainAward.endNomination
-    console.log(endNomination)
+    
     
     if(endNomination>now){
         return next(new ErrorResponse("Nomination is still on going!",400)); 
@@ -252,7 +252,7 @@ const resetAward = asyncHandler(async(req,res,next)=>{
 if(aw.company != req.user.userId){
   return next(new ErrorResponse("You cannot carry out this operation",400)); 
 }
-const now = moment().format('YYYY MM DD HH mm')
+const now = moment().utcOffset(60).format('YYYY MM DD HH mm');
 const endVoting = aw.endVoting
 if(now > endVoting){
   return next(new ErrorResponse("You cannot carry out this operation as voting as ended and winner emerged",400)); 

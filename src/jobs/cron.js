@@ -22,7 +22,7 @@ const mongoose = require("mongoose");
 
 const task = cron.schedule('* * * * *', async(req,res) => {
     const award = await Award.find()
-    const now = moment().format('YYYY MM DD HH mm')
+    const now = moment().utcOffset(60).format('YYYY MM DD HH mm');
     for(let i = 0; i<award.length; i++){
         if(now > award[i].endVoting && award[i].isWinner == false ){
             const highest = await  Voting.aggregate([
@@ -66,7 +66,7 @@ const task = cron.schedule('* * * * *', async(req,res) => {
 
   const task2 = cron.schedule('0 0 * * *', async(req,res) => {
     const leaves = await Leave.find()
-    const now = moment().format('YYYY MM DD HH mm')
+    const now = moment().utcOffset(60).format('YYYY MM DD HH mm');
     for(let i = 0; i<leaves.length; i++){
       const startDate = moment(leaves[i].startDate,'ddd MMM DD YYYY HH:mm:ss Z').format('YYYY MM DD HH mm')
       const endDate = moment(leaves[i].endDate,'ddd MMM DD YYYY HH:mm:ss Z').format('YYYY MM DD HH mm')
@@ -88,7 +88,7 @@ const task = cron.schedule('* * * * *', async(req,res) => {
 
 const task3 = cron.schedule('0 0 * * *', async(req,res) => {
   const leaves = await Leave.find()
-  const now = moment().format('YYYY MM DD HH mm')
+  const now = moment().utcOffset(60).format('YYYY MM DD HH mm');
   for(let i = 0; i<leaves.length; i++){
     const endDate = moment(leaves[i].endDate,'ddd MMM DD YYYY HH:mm:ss Z').format('YYYY MM DD HH mm')
     if( now > endDate  && leaves[i].hrStatus == "Approved"){
