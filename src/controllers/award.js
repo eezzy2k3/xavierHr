@@ -80,7 +80,7 @@ const vote = asyncHandler(async(req,res,next)=>{
     if(mainAward.company != company){
         return next(new ErrorResponse("You cannot take part in this process",400)); 
     }
-    const now = moment().tz('Africa/Lagos').format('YYYY MM DD HH mm');
+    const now = moment().utcOffset(60).format('YYYY MM DD HH mm');
     console.log(now)
     
     const endVoting = mainAward.endVoting
