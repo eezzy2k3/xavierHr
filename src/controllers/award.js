@@ -86,6 +86,7 @@ const vote = asyncHandler(async(req,res,next)=>{
     const endVoting = mainAward.endVoting
     
     const endNomination = mainAward.endNomination
+    console.log(endNomination)
     
     if(endNomination>now){
         return next(new ErrorResponse("Nomination is still on going!",400)); 
