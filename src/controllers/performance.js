@@ -192,5 +192,66 @@ const getApeerReview = asyncHandler(async(req,res,next)=>{
     res.status(200).json({success:true,msg:`You have successfully retreived a review`,data:peerReview})
 })
 
+const performanceRate = asyncHandler(async (req, res, next) => {
+    const employee = req.user.userId
+    const [q1, q2, q3, q4] = await Promise.all([
+      Review.findOne({
+        quarter: "Q1",
+        employee,
+        $expr: {
+          $eq: [{ $year: "$createdAt" }, new Date().getFullYear()],
+        },
+      }),
+      Review.findOne({
+        quarter: "Q2",
+        employee,
+        $expr: {
+          $eq: [{ $year: "$createdAt" }, new Date().getFullYear()],
+        },
+      }),
+      Review.findOne({
+        quarter: "Q3",
+        employee,
+        $expr: {
+          $eq: [{ $year: "$createdAt" }, new Date().getFullYear()],
+        },
+      }),
+      Review.findOne({
+        quarter: "Q4",
+        employee,
+        $expr: {
+          $eq: [{ $year: "$createdAt" }, new Date().getFullYear()],
+        },
+      }),
+    ]);
+  
+    const calculatePercent = (rating) => {
+      return rating ? (rating.averageRating / 5) * 100 : 0;
+    };
+  
+    const q1Percent = calculatePercent(q1);
+    const q2Percent = calculatePercent(q2);
+    const q3Percent = calculatePercent(q3);
+    const q4Percent = calculatePercent(q4);
+  
+    const nonZeroPercentages = [q1Percent, q2Percent, q3Percent, q4Percent].filter((percent) => percent !== 0);
+  
+    const averagePerformance =
+      nonZeroPercentages.length > 0
+        ? nonZeroPercentages.reduce((sum, percent) => sum + percent, 0) / nonZeroPercentages.length
+        : 0;
+  
+    const data = {
+      q1Percent: Number(q1Percent.toFixed(2)),
+      q2Percent: Number(q2Percent.toFixed(2)),
+      q3Percent: Number(q3Percent.toFixed(2)),
+      q4Percent: Number(q4Percent.toFixed(2)),
+      averagePerformance: Number(averagePerformance.toFixed(2)),
+    };
+  
+    res.status(200).json({ success: true, msg: `You have successfully retrieved performance rate`, data });
+  });
+  
 
-module.exports = {assignReview,reviewerReview,employeeReview,peerTopeer,myAssessment,employeeMatrics,taskMetrics,reviewHr,getApeerReview}
+
+module.exports = {assignReview,reviewerReview,employeeReview,peerTopeer,myAssessment,employeeMatrics,taskMetrics,reviewHr,getApeerReview,performanceRate}
