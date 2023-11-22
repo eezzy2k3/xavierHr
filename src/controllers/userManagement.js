@@ -498,5 +498,35 @@ const latestAffirmation = asyncHandler(async(req,res,next)=>{
   res.status(200).json({success:true,msg:"Affirmation message retreived",data:affirmation})
 })
 
+const allgamesEmployee = asyncHandler(async(req,res,next)=>{
+  
+  const company = req.user.company
+  const { page = 1, limit = 20, } = req.query;
+  let query = {company};
 
-module.exports = {allUsers,allUsersHr,updateHr,employeeMatrics,deactivate,updateEmployee,getUserHr,updateCompany,getMessage,createAnonymous,createGame,createAdvanture,getAdventureHr,getAdventureEmployee,createAffirmation,latestAffirmation}
+  const games = await Game.paginate(query, {
+      page,
+      limit,
+      sort: { createdAt: -1 },
+    });
+
+    res.status(200).json({success:true,msg:"games successfully retreived",data:games})
+})
+
+const allgamesHr = asyncHandler(async(req,res,next)=>{
+  
+  const company = req.user.userId
+  const { page = 1, limit = 20, } = req.query;
+  let query = {company};
+
+  const games = await Game.paginate(query, {
+      page,
+      limit,
+      sort: { createdAt: -1 },
+    });
+
+    res.status(200).json({success:true,msg:"games successfully retreived",data:games})
+})
+
+
+module.exports = {allUsers,allUsersHr,updateHr,employeeMatrics,deactivate,updateEmployee,getUserHr,updateCompany,getMessage,createAnonymous,createGame,createAdvanture,getAdventureHr,getAdventureEmployee,createAffirmation,latestAffirmation,allgamesEmployee,allgamesHr}

@@ -49,7 +49,7 @@ const confirmationCode = generateOTP(6)
     const message = `<h1>Confirm your Email</h1>
             <h2>Hello ${user.companyName}</h2>
             <p>Use the confirmation code: ${user.confirmationCode} to confrim your Email by clicking on the link below</p>
-            <a href=http://localhost:3000/confirmemail/${user._id}> Click here</a>
+            <a href=https://hr-x.vercel.app/auth/email-verification/${user._id}> Click here</a>
             </div>`
 
     // send token to email
@@ -233,7 +233,7 @@ try{
       message
   })
 }catch(error){
-  await this.User.findByIdAndDelete(user._id);
+  await User.findByIdAndDelete(user._id);
   console.log(`${user.email} is deleted`);
   console.log(error.message);
   next(new ErrorResponse("message could not be sent",500))
