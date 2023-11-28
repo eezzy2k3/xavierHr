@@ -437,6 +437,9 @@ const createGame = asyncHandler(async(req,res,next)=>{
 }
   const {name,link} = req.body
   const company = req.user.userId
+  if (!(await isValidAndAccessibleURL(link))) {
+    return next(new ErrorResponse("Invalid or inaccessible link",400));
+  }
   const response = await axios.get(link);
   const $ = cheerio.load(response.data);
   
@@ -445,6 +448,15 @@ const createGame = asyncHandler(async(req,res,next)=>{
   const game = await Game.create({name,link,company,thumbnailUrl})
   res.status(201).json({success:true,msg:"game created",data:game})
 })
+
+async function isValidAndAccessibleURL(url) {
+  try {
+    const response = await axios.head(url);
+    return response.status === 200;
+  } catch (error) {
+    return false;
+  }
+}
 
 const createAdvanture = asyncHandler(async(req,res,next)=>{
   if(req.user.role !== "HR"){
