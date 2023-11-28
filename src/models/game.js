@@ -27,7 +27,9 @@ mongoosePaginate.paginate.options = {
         ref: 'Company', 
       },
    
-      
+      thumbnailUrl:{
+        type: String
+      },
     
       
       name: {

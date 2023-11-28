@@ -14,6 +14,8 @@ const cloudinary = require("../utils/cloudinary")
 const {generateOTP} = require("../utils/generateCode")
 const {generatePassword} = require("../utils/generatePassword")
 const moment = require("moment")
+const cheerio = require('cheerio')
+const axios = require('axios')
 
 
 const allUsers = asyncHandler(async(req,res,next)=>{
@@ -435,7 +437,12 @@ const createGame = asyncHandler(async(req,res,next)=>{
 }
   const {name,link} = req.body
   const company = req.user.userId
-  const game = await Game.create({name,link,company})
+  const response = await axios.get(link);
+  const $ = cheerio.load(response.data);
+  
+  const thumbnailUrl = $('meta[property="og:image"]').attr('content');
+
+  const game = await Game.create({name,link,company,thumbnailUrl})
   res.status(201).json({success:true,msg:"game created",data:game})
 })
 

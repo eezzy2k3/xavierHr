@@ -41,6 +41,8 @@ const createLeave = asyncHandler(async(req,res,next)=>{
         // End date is not valid
         return next(new ErrorResponse("End date must be greater than the start date.",400));
       }
+      const companyDetails = await Company.findById(company)
+      const companyEmail = companyDetails.companyEmail
       const leaveDaysRequested = getWeekdayCount(startDate, endDate);
       let leavetaken;
       leavetaken = await Leave.find({ leaveType,userId });
@@ -50,9 +52,34 @@ const createLeave = asyncHandler(async(req,res,next)=>{
   
         
       
-        if (leaveDaysRequested > maximumDays) return next(new ErrorResponse(`You have exceeded your leave limit for ${leaveType}`,400));
+        if (leaveDaysRequested > maximumDays) return next(new ErrorResponse(`You have exceeded the leave limit for ${leaveType}`,400));
         const leaveRequest = await Leave.create({startDate,endDate,relieverName,reason, leaveDaysRequested,
             leaveType,fullName,userId,company,email,displayPicture,leaveTaken:0})
+
+            const message = `<h1>HR Approval Required</h1>
+            <p>Hi HR</p>
+            <p>A leave request from ${fullName} is awaiting your approval.</p>
+            <p>Leave Details:</p>
+            <ul>
+                <li>Requested Dates: ${startDate} to ${endDate}</li>
+                <li>Type of Leave: ${leaveType}</li>
+            </ul>
+            <footer>
+            <p>@ Xavier Hr team | All rights reserved.</p>
+            <p>1st Floor, Xavier House, 350 Borno Way, Yaba Lagos</p>
+            <p>Terms | Privacy Policy</p>
+        </footer>
+           `
+            try{
+             await sendMail({
+                  email:companyEmail,
+                  subject:`Leave Approval required`,
+                  message
+              })
+            }catch(error){
+              console.log(error.message);
+              next(new ErrorResponse("message could not be sent",500))
+            }
     
             res.status(201).json({success:true,msg:"successfully created a leave",data:leaveRequest})
       }
@@ -74,6 +101,31 @@ const createLeave = asyncHandler(async(req,res,next)=>{
       return next(new ErrorResponse(`You have exceeded your leave limit for ${leaveType}`,400));
       const leaveRequest = await Leave.create({startDate,endDate,relieverName,reason,leaveDaysRequested,
         leaveType,fullName,userId,company,email,displayPicture,leaveTaken:totalDaysTaken})
+
+        const message = `<h1>HR Approval Required</h1>
+        <p>Hi HR</p>
+        <p>A leave request from ${fullName} is awaiting your approval.</p>
+        <p>Leave Details:</p>
+        <ul>
+            <li>Requested Dates: ${startDate} to ${endDate}</li>
+            <li>Type of Leave: ${leaveType}</li>
+        </ul>
+        <footer>
+            <p>@ Xavier Hr team | All rights reserved.</p>
+            <p>1st Floor, Xavier House, 350 Borno Way, Yaba Lagos</p>
+            <p>Terms | Privacy Policy</p>
+        </footer>
+       `
+        try{
+         await sendMail({
+              email:companyEmail,
+              subject:`Leave Approval required`,
+              message
+          })
+        }catch(error){
+          console.log(error.message);
+          next(new ErrorResponse("message could not be sent",500))
+        }
 
         res.status(201).json({success:true,msg:"successfully created a leave",data:leaveRequest})
 })
@@ -314,6 +366,11 @@ const updateHr = asyncHandler(async(req,res,next)=>{
      : ""
  }
  <p>Please contact HR for further assistance or if you have any questions.</p>
+ <footer>
+ <p>@ Xavier Hr team | All rights reserved.</p>
+ <p>1st Floor, Xavier House, 350 Borno Way, Yaba Lagos</p>
+ <p>Terms | Privacy Policy</p>
+</footer>
 `
  try{
   await sendMail({
