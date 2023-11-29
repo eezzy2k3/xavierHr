@@ -521,6 +521,12 @@ const latestAffirmation = asyncHandler(async(req,res,next)=>{
   res.status(200).json({success:true,msg:"Affirmation message retreived",data:affirmation})
 })
 
+const latestAffirmationHr = asyncHandler(async(req,res,next)=>{
+  const company = req.user.userId
+  const affirmation = await Affirmation.findOne({company}).sort({ createdAt: -1 })
+  res.status(200).json({success:true,msg:"Affirmation message retreived",data:affirmation})
+})
+
 const allgamesEmployee = asyncHandler(async(req,res,next)=>{
   
   const company = req.user.company
@@ -552,4 +558,4 @@ const allgamesHr = asyncHandler(async(req,res,next)=>{
 })
 
 
-module.exports = {allUsers,allUsersHr,updateHr,employeeMatrics,deactivate,updateEmployee,getUserHr,updateCompany,getMessage,createAnonymous,createGame,createAdvanture,getAdventureHr,getAdventureEmployee,createAffirmation,latestAffirmation,allgamesEmployee,allgamesHr}
+module.exports = {allUsers,allUsersHr,updateHr,employeeMatrics,deactivate,updateEmployee,getUserHr,updateCompany,getMessage,createAnonymous,createGame,createAdvanture,getAdventureHr,getAdventureEmployee,createAffirmation,latestAffirmation,allgamesEmployee,allgamesHr,latestAffirmationHr}

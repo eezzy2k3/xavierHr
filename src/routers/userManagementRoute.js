@@ -1,5 +1,5 @@
 const express = require("express")
-const {allUsers,allUsersHr,updateHr,employeeMatrics,deactivate,updateEmployee,getUserHr,updateCompany,getMessage,createAnonymous,createGame,createAdvanture,getAdventureHr,getAdventureEmployee,createAffirmation,latestAffirmation,allgamesEmployee,allgamesHr } = require("../controllers/userManagement")
+const {allUsers,allUsersHr,updateHr,employeeMatrics,deactivate,updateEmployee,getUserHr,updateCompany,getMessage,createAnonymous,createGame,createAdvanture,getAdventureHr,getAdventureEmployee,createAffirmation,latestAffirmation,allgamesEmployee,allgamesHr,latestAffirmationHr } = require("../controllers/userManagement")
 const {authorize,access}= require("../middlewares/auth")
 const uploadPicture = require("../utils/pictureUpload")
 
@@ -21,6 +21,7 @@ router.get("/get-anonymous",authorize,getMessage)
 router.get("/get-adventure",authorize,getAdventureEmployee)
 router.get("/get-adventure-hr",authorize,getAdventureHr)
 router.get("/get-affirmation",authorize,latestAffirmation)
+router.get("/get-affirmation-hr",authorize,latestAffirmationHr)
 router.get("/get-games-hr",authorize,allgamesHr)
 router.get("/get-games",authorize,allgamesEmployee)
 
