@@ -27,7 +27,7 @@ const allUsers = asyncHandler(async(req,res,next)=>{
 
 const allUsersHr = asyncHandler(async(req,res,next)=>{
   if(req.user.role !== "HR"){
-    return next(new ErrorResponse("You do not have permission to carry out this operation"));
+    return next(new ErrorResponse("You do not have permission to carry out this operation",400));
 }
     const company = req.user.userId
     const { page = 1, limit = 20, status } = req.query;
@@ -47,7 +47,7 @@ if(status){
 
 const updateHr = asyncHandler(async(req,res,next)=>{
   if(req.user.role !== "HR"){
-    return next(new ErrorResponse("You do not have permission to carry out this operation"));
+    return next(new ErrorResponse("You do not have permission to carry out this operation",400));
 }
     const {
         phoneNumber,
@@ -85,7 +85,7 @@ const updateHr = asyncHandler(async(req,res,next)=>{
         return next(new ErrorResponse("user does not exist",404));
       }
       if(user.company != req.user.userId){
-        return next(new ErrorResponse("You do not have permission to carry out this operation"));
+        return next(new ErrorResponse("You do not have permission to carry out this operation",400));
     }
       if (phoneNumber) {
         user.phoneNumber = phoneNumber;
@@ -178,7 +178,7 @@ const updateHr = asyncHandler(async(req,res,next)=>{
 
 const employeeMatrics = asyncHandler(async(req,res,next)=>{
   if(req.user.role !== "HR"){
-    return next(new ErrorResponse("You do not have permission to carry out this operation"));
+    return next(new ErrorResponse("You do not have permission to carry out this operation",400));
 }
   const company = req.user.userId
   const active = await User.countDocuments({company,status:"Active"})
@@ -201,7 +201,7 @@ const employeeMatrics = asyncHandler(async(req,res,next)=>{
 
 const deactivate = asyncHandler(async(req,res,next)=>{
   if(req.user.role !== "HR"){
-    return next(new ErrorResponse("You do not have permission to carry out this operation"));
+    return next(new ErrorResponse("You do not have permission to carry out this operation",400));
 }
   const userId = req.params.userId
   const user = await User.findById(userId)
@@ -209,7 +209,7 @@ const deactivate = asyncHandler(async(req,res,next)=>{
     return next(new ErrorResponse("user does not exist",404));
   }
   if(user.company != req.user.userId){
-    return next(new ErrorResponse("You do not have permission to carry out this operation"));
+    return next(new ErrorResponse("You do not have permission to carry out this operation",400));
 }
   user.isEmployed = false
   user.status = "Deactivated"
@@ -331,7 +331,7 @@ const updateEmployee = asyncHandler(async(req,res,next)=>{
 
 const getUserHr = asyncHandler(async(req,res,next)=>{
   if(req.user.role !== "HR"){
-    return next(new ErrorResponse("You do not have permission to carry out this operation"));
+    return next(new ErrorResponse("You do not have permission to carry out this operation",400));
 }
   const userId = req.params.userId
   const user = await User.findById(userId)
@@ -339,7 +339,7 @@ const getUserHr = asyncHandler(async(req,res,next)=>{
     return next(new ErrorResponse("user does not exist",404));
   }
   if(user.company != req.user.userId){
-    return next(new ErrorResponse("You do not have permission to carry out this operation"));
+    return next(new ErrorResponse("You do not have permission to carry out this operation",400));
 }
 
   res.status(200).json({success:true,msg:`You have successfully retreived an employee`,data:user})
@@ -348,7 +348,7 @@ const getUserHr = asyncHandler(async(req,res,next)=>{
 const updateCompany = asyncHandler(async(req,res,next)=>{
  
   const {
-    companyName,industry,country,phoneNumber,jurisdiction, rcNo,taxIdNo,address,website
+    companyName,industry,country,phoneNumber,jurisdiction, rcNo,taxIdNo,address,website,companySize
     } = req.body;
     const userId = req.user.userId
    
@@ -398,6 +398,10 @@ const updateCompany = asyncHandler(async(req,res,next)=>{
       user.website =   website;
     }
 
+    if (companySize) {
+      user.companySize = companySize;
+    }
+
    
 
   await user.save();
@@ -406,7 +410,7 @@ const updateCompany = asyncHandler(async(req,res,next)=>{
 
 const createAnonymous = asyncHandler(async(req,res,next)=>{
   if(req.user.role !== "Employee"){
-    return next(new ErrorResponse("You do not have permission to carry out this operation"));
+    return next(new ErrorResponse("You do not have permission to carry out this operation",400));
 }
   const message = req.body.message
   const company = req.user.company
@@ -416,7 +420,7 @@ const createAnonymous = asyncHandler(async(req,res,next)=>{
 
 const getMessage = asyncHandler(async(req,res,next)=>{
   if(req.user.role !== "HR"){
-    return next(new ErrorResponse("You do not have permission to carry out this operation"));
+    return next(new ErrorResponse("You do not have permission to carry out this operation",400));
 }
     const company = req.user.userId
     const { page = 1, limit = 20, } = req.query;
@@ -433,7 +437,7 @@ const getMessage = asyncHandler(async(req,res,next)=>{
 
 const createGame = asyncHandler(async(req,res,next)=>{
   if(req.user.role !== "HR"){
-    return next(new ErrorResponse("You do not have permission to carry out this operation"));
+    return next(new ErrorResponse("You do not have permission to carry out this operation",400));
 }
   const {name,link} = req.body
   const company = req.user.userId
@@ -460,7 +464,7 @@ async function isValidAndAccessibleURL(url) {
 
 const createAdvanture = asyncHandler(async(req,res,next)=>{
   if(req.user.role !== "HR"){
-    return next(new ErrorResponse("You do not have permission to carry out this operation"));
+    return next(new ErrorResponse("You do not have permission to carry out this operation",400));
 }
   let {name,venue, date} = req.body
   const company = req.user.userId
@@ -471,7 +475,7 @@ const createAdvanture = asyncHandler(async(req,res,next)=>{
 
 const getAdventureHr = asyncHandler(async(req,res,next)=>{
   if(req.user.role !== "HR"){
-    return next(new ErrorResponse("You do not have permission to carry out this operation"));
+    return next(new ErrorResponse("You do not have permission to carry out this operation",400));
 }
     const company = req.user.userId
     const { page = 1, limit = 20, } = req.query;
@@ -503,7 +507,7 @@ const getAdventureEmployee = asyncHandler(async(req,res,next)=>{
 
 const createAffirmation = asyncHandler(async(req,res,next)=>{
   if(req.user.role !== "HR"){
-    return next(new ErrorResponse("You do not have permission to carry out this operation"));
+    return next(new ErrorResponse("You do not have permission to carry out this operation",400));
 }
   const message = req.body.message
   const company = req.user.userId

@@ -53,6 +53,9 @@ const companySchema = mongoose.Schema(
     phoneNumber: {
       type: String,
     },
+    companySize: {
+      type: Number,
+    },
     logo: {
       type: String,
     },
