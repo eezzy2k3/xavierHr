@@ -168,10 +168,11 @@ const pendingHr = asyncHandler(async(req,res,next)=>{
   });
   
   if (!request.docs || request.docs.length === 0) {
+    let data = request.docs
     res.status(200).json({
       success: true,
       msg: "No leave requests found for the specified criteria",
-      data: request,
+      data
     });
   } else {
     const paginatedLeave = await Promise.all(
@@ -230,10 +231,11 @@ const approvedHr = asyncHandler(async(req,res,next)=>{
   });
   
   if (!request.docs || request.docs.length === 0) {
+    let data = request.docs
     res.status(200).json({
       success: true,
       msg: "No leave requests found for the specified criteria",
-      data: request,
+      data
     });
   } else {
     const paginatedLeave = await Promise.all(
@@ -292,10 +294,11 @@ const rejectedHr = asyncHandler(async(req,res,next)=>{
   });
   
   if (!request.docs || request.docs.length === 0) {
+    let data = request.docs
     res.status(200).json({
       success: true,
       msg: "No leave requests found for the specified criteria",
-      data: request,
+      data
     });
   } else {
     const paginatedLeave = await Promise.all(
