@@ -113,7 +113,7 @@ const peerTopeer = asyncHandler(async(req,res,next)=>{
 const myAssessment = asyncHandler(async(req,res,next)=>{
     const  employee = req.user.userId
     let query = {employee}
-    const { page = 1, limit = 1, quarter } = req.query;
+    const { page = 1, limit = 20, quarter } = req.query;
     if(quarter){
         query.quarter = quarter
     }
