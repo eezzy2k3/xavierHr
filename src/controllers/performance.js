@@ -43,7 +43,8 @@ const assignReview = asyncHandler(async(req,res,next)=>{
 })
 
 const reviewerReview = asyncHandler(async(req,res,next)=>{
-    let { employee, reviewer, numberOftaskAssigned, numberOftaskCompleted,collaborationReview,collaborationComment,
+    const reviewer = req.user.userId
+    let { employee, numberOftaskAssigned, numberOftaskCompleted,collaborationReview,collaborationComment,
         creativityReview, creativityComment,communicationReview,  communicationComment, timeManagementReview, timeManagementComment,problemSolvingReview, problemSolvingComment,quarter,endDate,startDate} = req.body
         startDate = moment(startDate).format('YYYY MM DD')
         endDate = moment(endDate).format('YYYY MM DD')
