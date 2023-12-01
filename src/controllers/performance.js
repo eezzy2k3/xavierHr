@@ -96,9 +96,9 @@ const employeeReview = asyncHandler(async(req,res,next)=>{
 const peerTopeer = asyncHandler(async(req,res,next)=>{
     const  reviewer = req.user.userId
     let query = {reviewer}
-    const { page = 1, limit = 20, quater } = req.query;
-    if(quater){
-        query.quater = quater
+    const { page = 1, limit = 20, quarter } = req.query;
+    if(quarter){
+        query.quarter = quarter
     }
     const p2p = await AssignReview.paginate(query, {
         page,
@@ -165,9 +165,9 @@ const reviewHr = asyncHandler(async(req,res,next)=>{
     const  employee = req.params.employee
     const company = req.user.userId
     let query = {employee,company}
-    const { page = 1, limit = 1, quater } = req.query;
-    if(quater){
-        query.quater = quater
+    const { page = 1, limit = 1, quarter } = req.query;
+    if(quarter){
+        query.quarter = quarter
     }
     const p2p = await Review.paginate(query, {
         page,

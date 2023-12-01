@@ -35,9 +35,11 @@ mongoosePaginate.paginate.options = {
           },
          numberOftaskAssigned: {
             type: Number,
+            default:0
           },
           numberOftaskCompleted: {
             type: Number,
+            default:0
           },
           collaboration: {
             type: String,
